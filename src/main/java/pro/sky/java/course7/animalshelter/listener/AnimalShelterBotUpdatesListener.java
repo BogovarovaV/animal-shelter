@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,17 +14,13 @@ import pro.sky.java.course7.animalshelter.service.UserService;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
+import static pro.sky.java.course7.animalshelter.service.Constants.*;
+
+
 @Service
 public class AnimalShelterBotUpdatesListener implements UpdatesListener {
 
     private static final Logger logger = LoggerFactory.getLogger(AnimalShelterBotUpdatesListener.class);
-
-
-    private final String START_CMD = "/start";
-
-    private final String GREETINGS_TEXT = "Hello, dear friend!";
-
-    private final String INVALID_NOTIFICATION_OR_CMD = "Invalid command or notification, please, start again";
 
     private final TelegramBot animalShelterBot;
     private final UserService userService;
@@ -39,29 +35,131 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
         animalShelterBot.setUpdatesListener(this);
     }
 
+    /**
+     * Method for receiving replies from the bot whenever we send our message
+     *
+     * @param updates used for receiving and checking different types of updates
+     */
+
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
             logger.info("Processing update: {}", update);
             Message message = update.message();
-            if (message.text().startsWith(START_CMD)) {
-                logger.info(START_CMD + " command has been received");
-                sendMessage(extractChatId(message), GREETINGS_TEXT);
-            } else {
-                sendMessage(extractChatId(message), INVALID_NOTIFICATION_OR_CMD);
+            // check if the update has a message and message has text
+            if (message != null && message.text() != null) {
+                String command = message.text();
+                executeCommand(command, extractChatId(message));
+                // check if the update has any callback
+            } else if (update.callbackQuery().data() != null) {
+                executeCommand(update.callbackQuery().data(), update.callbackQuery().from().id());
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
+    /**
+     * Method for recognition and implementation of posted command
+     *
+     * @param command - name of handled command
+     */
 
-    private void sendMessage(Long chatId, String messageText) {
-        SendMessage sendMessage = new SendMessage(chatId, messageText);
-        animalShelterBot.execute(sendMessage);
+    private void executeCommand(String command, long chatId) {
+        SendMessage outputMessage;
+        switch (command) {
+            case START_CMD:
+                logger.info(START_CMD + " command has been received");
+                outputMessage = new SendMessage(chatId, GREETINGS_TEXT)
+                        // show start menu
+                        .replyMarkup(startButtons());
+                break;
+            case SHELTER_INFO_CMD:
+                logger.info(SHELTER_INFO_CMD + " command has been received");
+                outputMessage = new SendMessage(chatId, "Узнать о нас")
+                        // show "About shelter" menu
+                        .replyMarkup(infoButtons());
+                break;
+            case ABOUT_US_CMD:
+                logger.info(ABOUT_US_CMD + " command has been received");
+                outputMessage = new SendMessage(chatId, ABOUT_US_TEXT);
+                break;
+            case WORKING_HOURS_CMD:
+                logger.info(WORKING_HOURS_CMD + " command has been received");
+                outputMessage = new SendMessage(chatId, WORKING_HOURS_TEXT);
+                break;
+            case SAFETY_RECOMMENDATION_CMD:
+                logger.info(SAFETY_RECOMMENDATION_CMD + " command has been received");
+                outputMessage = new SendMessage(chatId, SAFETY_RECOMMENDATION_TEXT);
+                break;
+            case CONTACT_ME_CMD:
+                logger.info(CONTACT_ME_CMD + " command has been received");
+                outputMessage = new SendMessage(chatId, CONTACT_ME_TEXT);
+                break;
+            default:
+                logger.info("Unknown command has been received");
+                outputMessage = new SendMessage(chatId, INVALID_NOTIFICATION_OR_CMD);
+        }
+        try {
+            animalShelterBot.execute(outputMessage);
+        } catch (Exception e) {
+            logger.info("Exception was thrown in execution command method ");
+            e.printStackTrace();
+        }
     }
+
+//    private static InlineKeyboardMarkup startButtons() {
+//        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
+//                new InlineKeyboardButton("О приюте").callbackData(SHELTER_INFO_CMD));
+//        return inlineKeyboard;
+//    }
+
+    /**
+     * Method for creation start menu with buttons
+     */
+
+    private static ReplyKeyboardMarkup startButtons() {
+        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup(
+                "О приюте",
+                "Как забрать собаку",
+                "Прислать отчет",
+                "Позвать волонтера")
+                .oneTimeKeyboard(true)
+                .resizeKeyboard(true)
+                .selective(true);
+        return replyKeyboard;
+    }
+
+//    private static InlineKeyboardMarkup infoButtons() {
+//        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
+//                new InlineKeyboardButton("Кто мы").callbackData(ABOUT_US_CMD),
+//                new InlineKeyboardButton("Адрес").callbackData(WORKING_HOURS_CMD),
+//                new InlineKeyboardButton("Безопасность").callbackData(SAFETY_RECOMMENDATION_CMD));
+//                       new InlineKeyboardButton("Связаться со мной").callbackData(CONTACT_ME_TEXT));
+//        return inlineKeyboard;
+//    }
+
+    /**
+     * Method for creation "About shelter" menu with buttons
+     */
+
+    private static ReplyKeyboardMarkup infoButtons() {
+        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup(
+                "Кто мы",
+                "Адрес",
+                "Безопасность",
+                "Связаться со мной")
+                .resizeKeyboard(true);
+        return replyKeyboard;
+    }
+
+    /**
+     * Method for extraction user's chatId
+     *
+     * @param message received message from user
+     */
 
     private long extractChatId(Message message) {
         return message.chat().id();
     }
-
 }
+

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
