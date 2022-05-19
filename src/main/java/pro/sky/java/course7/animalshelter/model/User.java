@@ -15,7 +15,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     private long chatId;
+
     private String name;
 
     private String phoneNumber;
@@ -33,12 +35,11 @@ public class User {
     public User() {
     }
 
-    public User(String name, String phoneNumber, String email, int age, Long id) {
+    public User(String name, String phoneNumber, String email, int age) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.age = age;
-        this.id = id;
     }
 
     public String getUserMessage() {
