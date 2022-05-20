@@ -5,6 +5,9 @@ public interface Constants {
     String START_CMD = "/start";
     String GREETINGS_TEXT = "Бот приюта для кошек и собак в г. Нур-Султан приветствует Вас!";
 
+    String BACK_TO_START_CMD = START_CMD;
+    String BACK_TO_START_TEXT = "В главное меню";
+
     String SHELTER_INFO_CMD = "О приюте";
 
     String ABOUT_US_CMD = "Кто мы";
@@ -15,7 +18,8 @@ public interface Constants {
             "и поможем подготовиться к жизни с новым другом.";
 
     String WORKING_HOURS_CMD = "Адрес";
-    String WORKING_HOURS_TEXT = "Мы находимся по адресу: " +
+    String WORKING_HOURS_TEXT = "Мы находимся по адресу: г. Нур-Султан, ул. Аккорган, д. 5В" +
+            "\nСхема проезда: Автобус №8, №54 до остановки Болашак" +
             "\nРежим работы приюта: с Пн по Вс с 09:00 до 18:00. ";
 
     String SAFETY_RECOMMENDATION_CMD = "Безопасность";
@@ -27,9 +31,9 @@ public interface Constants {
 
     String CONTACT_ME_CMD = "Связаться со мной";
     String CONTACT_ME_TEXT = "Пожалуйста, отправьте свои данные в формате: " +
-            "\nИмя Возраст Мобильный телефон Эл. почта " +
+            "\nИмя Мобильный телефон Эл. почта " +
             "\nПример: " +
-            "\nПетров Петр 18 +71231231231 petrov@mail.ru";
+            "\nПетров Петр +71231231231 petrov@mail.ru";
 
 
     String CALL_VOLUNTEER_CMD = "/volunteer";
