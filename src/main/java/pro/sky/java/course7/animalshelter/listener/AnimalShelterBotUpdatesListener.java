@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static pro.sky.java.course7.animalshelter.service.Constants.*;
+import static pro.sky.java.course7.animalshelter.service.Constants.SHELTER_INFO_CMD;
 
 
 @Service
@@ -75,9 +76,15 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                 break;
             case SHELTER_INFO_CMD:
                 logger.info(SHELTER_INFO_CMD + " command has been received");
-                outputMessage = new SendMessage(chatId, "Узнать о нас")
+                outputMessage = new SendMessage(chatId, "О приюте")
                         // show "About shelter" menu
                         .replyMarkup(infoButtons());
+                break;
+            case BACK_TO_START_TEXT:
+                logger.info(BACK_TO_START_CMD + " command has been received");
+                outputMessage = new SendMessage(chatId, BACK_TO_START_TEXT)
+                        // back to start menu
+                        .replyMarkup(startButtons());
                 break;
             case ABOUT_US_CMD:
                 logger.info(ABOUT_US_CMD + " command has been received");
@@ -107,18 +114,13 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
         }
     }
 
-//    private static InlineKeyboardMarkup startButtons() {
-//        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-//                new InlineKeyboardButton("О приюте").callbackData(SHELTER_INFO_CMD));
-//        return inlineKeyboard;
-//    }
 
     /**
      * Method for creation start menu with buttons
      */
 
     private static ReplyKeyboardMarkup startButtons() {
-        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup(
+        return new ReplyKeyboardMarkup(
                 "О приюте",
                 "Как забрать собаку",
                 "Прислать отчет",
@@ -126,30 +128,20 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                 .oneTimeKeyboard(true)
                 .resizeKeyboard(true)
                 .selective(true);
-        return replyKeyboard;
     }
-
-//    private static InlineKeyboardMarkup infoButtons() {
-//        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-//                new InlineKeyboardButton("Кто мы").callbackData(ABOUT_US_CMD),
-//                new InlineKeyboardButton("Адрес").callbackData(WORKING_HOURS_CMD),
-//                new InlineKeyboardButton("Безопасность").callbackData(SAFETY_RECOMMENDATION_CMD));
-//                       new InlineKeyboardButton("Связаться со мной").callbackData(CONTACT_ME_TEXT));
-//        return inlineKeyboard;
-//    }
 
     /**
      * Method for creation "About shelter" menu with buttons
      */
 
     private static ReplyKeyboardMarkup infoButtons() {
-        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup(
+        return new ReplyKeyboardMarkup(
                 "Кто мы",
                 "Адрес",
                 "Безопасность",
-                "Связаться со мной")
+                "Связаться со мной",
+                "В главное меню")
                 .resizeKeyboard(true);
-        return replyKeyboard;
     }
 
     /**
