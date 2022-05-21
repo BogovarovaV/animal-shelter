@@ -1,7 +1,7 @@
 -- liquibase formatted sql
 
 -- changeset Diana:1
-create table "User"
+create table Client
 (
 
     id           serial       NOT NULL PRIMARY KEY,
@@ -13,4 +13,4 @@ create table "User"
 );
 
 -- changeset Diana:2
-CREATE INDEX user_data_idx ON "User" (user) WHERE status = 'REQUESTED';
+CREATE INDEX user_data_idx ON Client (user) WHERE status = 'REQUESTED';
