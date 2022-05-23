@@ -115,7 +115,7 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                     outputMessage = registrationUser(inputMessage, chatId);
                 } else {
                     logger.info(INVALID_NOTIFICATION_OR_CMD + " message has been received");
-                    outputMessage = new SendMessage(chatId, INVALID_NOTIFICATION_OR_CMD);
+                 outputMessage = new SendMessage(chatId, INVALID_NOTIFICATION_OR_CMD);
                 }
         }
         try {
@@ -208,7 +208,7 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
             outputMessage = new SendMessage(chatId, SUCCESS_SAVING_TEXT);
         } else {
             logger.info("Invalid registration data");
-            outputMessage = new SendMessage(chatId, SAVING_FAILED_TEXT + CONTACT_ME_TEXT);
+            outputMessage = new SendMessage(chatId, CONTACT_ME_TEXT );
         }
         return outputMessage;
     }
