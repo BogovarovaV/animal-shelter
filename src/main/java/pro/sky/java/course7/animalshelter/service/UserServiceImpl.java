@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     public User save(User user, Long chatId) {
         user.setChatId(chatId);
         User savedUser = repository.save(user);
-        logger.info("Client's data has been saved successfully: " + savedUser);
+            logger.info("Client's data has been saved successfully: " + savedUser);
         return savedUser;
     }
 
