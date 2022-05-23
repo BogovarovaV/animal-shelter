@@ -3,7 +3,7 @@ package pro.sky.java.course7.animalshelter.service;
 public interface Constants {
 
     String START_CMD = "/start";
-    String GREETINGS_TEXT = "Бот приюта для кошек и собак в г. Нур-Султан приветствует Вас!";
+    String GREETINGS_TEXT = "Бот приюта для кошек и собак в г. Нур-Султан приветствует Вас! Выберите нужный пункт меню";
 
     String BACK_TO_START_CMD = START_CMD;
     String BACK_TO_START_TEXT = "В главное меню";
@@ -36,8 +36,11 @@ public interface Constants {
             "\nПетров Петр +71231231231 petrov@mail.ru";
 
 
-    String CALL_VOLUNTEER_CMD = "/volunteer";
+    String CALL_VOLUNTEER_CMD = "Позвать волонтера";
     String CALL_VOLUNTEER_TEXT = "Волонтер уже торопиться к вам с ответом";
 
-    String INVALID_NOTIFICATION_OR_CMD = "Invalid command or notification, please, start again";
+    String SUCCESS_SAVING_TEXT = "Ваши данные сохранены, мы свяжемся с вами в ближайшее время";
+    String SAVING_FAILED_TEXT = "Мне не удалось распознать ваши данные\n";
+
+    String INVALID_NOTIFICATION_OR_CMD = "Я пока еще не знаю такой команды";
 }
