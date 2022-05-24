@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
      */
 
     @Override
-    public User save(User user, Long chatId) {
+    public User save(User user, long chatId) {
         user.setChatId(chatId);
         User savedUser = repository.save(user);
             logger.info("Client's data has been saved successfully: " + savedUser);
@@ -61,4 +61,23 @@ public class UserServiceImpl implements UserService {
         }
         return Optional.ofNullable(result);
     }
+
+    @Override
+    public User getUserByChatId(long chatId) {
+        logger.info("Was invoked method to find a student by chatId");
+        return repository.findUserByChatId(chatId);
+    }
+
+
+    @Override
+    public void deleteUserByChatId(long chatId) {
+        logger.info("Was invoked method to delete a client by Id");
+        repository.deleteById(repository.findUserByChatId(chatId).getId());
+    }
+
+//    @Override
+//    public Collection<User> getAllUsers() {
+//        logger.info("Was invoked method to get a list of all users");
+//        return repository.findAll();
+//    }
 }

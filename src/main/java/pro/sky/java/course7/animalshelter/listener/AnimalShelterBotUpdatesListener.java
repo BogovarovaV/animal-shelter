@@ -126,13 +126,7 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
         }
     }
 
-    /**
-     * Create start menu buttons
-     *
-     * @return buttons
-     */
-
-//    private static ReplyKeyboardMarkup startButtons() {
+    //    private static ReplyKeyboardMarkup startButtons() {
 //        return new ReplyKeyboardMarkup(
 //                new String[]{"О приюте", "Как забрать питомца"},
 //                new String[]{"Прислать отчет", "Позвать волонтера"})
@@ -203,14 +197,22 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
         SendMessage outputMessage;
         Optional<User> parseResult = userService.parse(inputMessage);
         if (parseResult.isPresent()) {
-            logger.info("Parse result is valid");
-            userService.save(parseResult.get(), chatId);
-            outputMessage = new SendMessage(chatId, SUCCESS_SAVING_TEXT);
+            if (userService.getUserByChatId(chatId) == null) {
+                logger.info("Parse result is valid");
+                userService.save(parseResult.get(), chatId);
+                outputMessage = new SendMessage(chatId, SUCCESS_SAVING_TEXT);
+            } else {
+                logger.info("Data is already exists, it will be restored");
+                userService.deleteUserByChatId(chatId);
+                userService.save(parseResult.get(), chatId);
+                outputMessage = new SendMessage(chatId, "Ваши данные успешно перезаписаны" );
+            }
         } else {
             logger.info("Invalid registration data");
             outputMessage = new SendMessage(chatId, CONTACT_ME_TEXT );
         }
         return outputMessage;
     }
+
 }
 
