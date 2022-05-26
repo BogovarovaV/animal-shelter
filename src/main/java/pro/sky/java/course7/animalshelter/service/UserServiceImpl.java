@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,9 +76,9 @@ public class UserServiceImpl implements UserService {
         repository.deleteById(repository.findUserByChatId(chatId).getId());
     }
 
-//    @Override
-//    public Collection<User> getAllUsers() {
-//        logger.info("Was invoked method to get a list of all users");
-//        return repository.findAll();
-//    }
+    @Override
+    public Collection<User> getAllUsers() {
+        logger.info("Was invoked method to get a list of all users");
+        return repository.findAll();
+    }
 }
