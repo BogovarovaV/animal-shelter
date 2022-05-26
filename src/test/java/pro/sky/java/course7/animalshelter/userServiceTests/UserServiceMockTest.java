@@ -1,5 +1,6 @@
 package pro.sky.java.course7.animalshelter.userServiceTests;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,10 +11,10 @@ import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
 import pro.sky.java.course7.animalshelter.service.UserServiceImpl;
 
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static pro.sky.java.course7.animalshelter.DataTest.*;
 
@@ -35,12 +36,10 @@ public class UserServiceMockTest {
         user1 = new User(USER_NAME_1, USER_PHONE_1, USER_EMAIL_1);
         user2 = new User(USER_NAME_2, USER_PHONE_2, USER_EMAIL_2);
         out = new UserServiceImpl(userRepositoryMock);
-
     }
 
     @Test
     public void saveTest() {
-
         when(userRepositoryMock.save(user1)).thenReturn(user1);
         assertEquals(user1, out.save(user1, USER_CHAT_ID_1));
         verify(userRepositoryMock, times(1)).save(user1);
@@ -59,9 +58,15 @@ public class UserServiceMockTest {
     }
 
     @Test
+    public void getAllTest() {
+        when(userRepositoryMock.findAll()).thenReturn(
+                (List.of(user1, user2)));
+        assertTrue(CollectionUtils.isEqualCollection(List.of(user1, user2), out.getAllUsers()));
+    }
+
+    @Test
     public void deleteUserByChatIdTest() {
-        when(userRepositoryMock.findUserByChatId(USER_CHAT_ID_1)).thenReturn(user1);
-        doNothing().when(userRepositoryMock).deleteById(user1.getId());
-        verify(userRepositoryMock, times(1)).deleteUserByChatId(USER_CHAT_ID_1);
+        when(userRepositoryMock.findUserByChatId(USER_CHAT_ID_2)).thenReturn(user2);
+        assertDoesNotThrow(() -> out.deleteUserByChatId(USER_CHAT_ID_2));
     }
 }
