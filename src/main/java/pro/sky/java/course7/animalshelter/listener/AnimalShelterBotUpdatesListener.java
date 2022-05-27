@@ -25,7 +25,7 @@ import static pro.sky.java.course7.animalshelter.service.Constants.*;
 public class AnimalShelterBotUpdatesListener implements UpdatesListener {
 
     private static final Logger logger = LoggerFactory.getLogger(AnimalShelterBotUpdatesListener.class);
-    private static boolean registrationDataSent =false;
+    private static boolean registrationRequire = false;
 
     private final TelegramBot animalShelterBot;
     private final UserService userService;
@@ -57,9 +57,6 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
             if (message != null && message.text() != null) {
                 String inputMessage = message.text();
                 handleMessage(inputMessage, extractChatId(message));
-            } else if (update.callbackQuery().data() != null) {
-                logger.info("Callback: " + update.callbackQuery().data() + " has been received");
-                handleMessage(update.callbackQuery().data(), update.callbackQuery().from().id());
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
@@ -84,12 +81,12 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                 break;
             case SHELTER_INFO_CMD:
                 logger.info(SHELTER_INFO_CMD + " message has been received");
-                outputMessage = new SendMessage(chatId, "О приюте\n" + CHOOSE_OPTION)
+                outputMessage = new SendMessage(chatId, CHOOSE_OPTION)
                         // show "About shelter" menu
                         .replyMarkup(shelterInfoButtons());
                 break;
-            case BACK_TO_START_CMD:
-                logger.info(BACK_TO_START_CMD + " message has been received");
+            case BACK_TO_MAIN_MENU_CMD:
+                logger.info(BACK_TO_MAIN_MENU_CMD + " message has been received");
                 outputMessage = new SendMessage(chatId, CHOOSE_OPTION)
                         // back to start menu
                         .replyMarkup(startButtons());
@@ -109,9 +106,10 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
             case CONTACT_ME_CMD:
                 logger.info(CONTACT_ME_CMD + " message has been received");
                 outputMessage = new SendMessage(chatId, CONTACT_ME_TEXT);
-                registrationDataSent = true;
+                registrationRequire = true;
                 break;
             case HOW_TO_TAKE_CMD:
+            case BACK_TO_RECOMMENDATION_MENU_CMD:
                 logger.info(HOW_TO_TAKE_CMD + "message has been received");
                 outputMessage = new SendMessage(chatId, HOW_TO_TAKE_CMD)
                         .replyMarkup(recommendationButtons());
@@ -125,6 +123,7 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                 outputMessage = new SendMessage(chatId, DOCUMENTS_TEXT);
                 break;
             case TRANSPORTING_AND_ADVICE_CMD:
+            case BACK_TO_TRANSPORT_AND_ADVICE_MENU_CMD:
                 logger.info(TRANSPORTING_AND_ADVICE_CMD + "message has been received");
                 outputMessage = new SendMessage(chatId, CHOOSE_OPTION)
                         .replyMarkup(transportAndAdviceMenu());
@@ -155,6 +154,7 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                 outputMessage = new SendMessage(chatId, REFUSAL_REASONS_TEXT);
                 break;
             case CYNOLOGIST_CMD:
+            case BACK_TO_CYNOLOGIST_MENU_CMD:
                 logger.info(CYNOLOGIST_CMD + "message has been received");
                 outputMessage = new SendMessage(chatId, CHOOSE_OPTION)
                         .replyMarkup(cynologistMenu());
@@ -172,12 +172,12 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                 outputMessage = new SendMessage(chatId, CALL_VOLUNTEER_TEXT);
                 break;
             default:
-                if (registrationDataSent) {
+                if (registrationRequire) {
                     logger.info("Registration data has been sent");
                     outputMessage = registrationUser(inputMessage, chatId);
                 } else {
                     logger.info(INVALID_NOTIFICATION_OR_CMD + " message has been received");
-                    outputMessage = new SendMessage(chatId, INVALID_NOTIFICATION_OR_CMD);
+                    outputMessage = new SendMessage(chatId, INVALID_NOTIFICATION_OR_CMD + "\n\n" + CALL_VOLUNTEER_TEXT);
                 }
         }
         try {
@@ -188,17 +188,8 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
         }
     }
 
-    //    private static ReplyKeyboardMarkup startButtons() {
-//        return new ReplyKeyboardMarkup(
-//                new String[]{"О приюте", "Как забрать питомца"},
-//                new String[]{"Прислать отчет", "Позвать волонтера"})
-//                .oneTimeKeyboard(true)
-//                .resizeKeyboard(true)
-//                .selective(true);
-//    }
-
     /**
-     * Create fixed buttons
+     * Create main menu buttons
      *
      * @return buttons
      */
@@ -206,131 +197,88 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
     private static Keyboard startButtons() {
         return new ReplyKeyboardMarkup(
                 new KeyboardButton[]{
-                        new KeyboardButton("О приюте"),
-                        new KeyboardButton("Как забрать питомца"),
+                        new KeyboardButton(SHELTER_INFO_CMD),
+                        new KeyboardButton(HOW_TO_TAKE_CMD),
                 },
                 new KeyboardButton[]{
-                        new KeyboardButton("Прислать отчет"),
-                        new KeyboardButton("Позвать волонтера \uD83E\uDDCD")
+                        new KeyboardButton(SEND_REPORT_CMD),
+                        new KeyboardButton(CALL_VOLUNTEER_CMD)
                 })
                 .resizeKeyboard(true);
     }
 
     /**
-     * Create "About shelter" menu with buttons
+     * Create "About shelter" menu buttons
+     *
+     * @return buttons
+     */
+    private static ReplyKeyboardMarkup shelterInfoButtons() {
+        logger.info("Shelter info keyboard was called");
+        return new ReplyKeyboardMarkup(
+                new String[]{ABOUT_US_CMD, WORKING_HOURS_CMD},
+                new String[]{SAFETY_RECOMMENDATION_CMD, CONTACT_ME_CMD},
+                new String[]{BACK_TO_MAIN_MENU_CMD})
+                .resizeKeyboard(true);
+    }
+
+    /**
+     * Create "How to take a dog" menu buttons
+     *
+     * @return buttons
+     */
+    private static ReplyKeyboardMarkup recommendationButtons() {
+        logger.info("Recommendation Keyboard was called");
+        return new ReplyKeyboardMarkup(
+                new String[]{MEET_THE_DOG_CMD, DOCUMENTS_CMD},
+                new String[]{TRANSPORTING_AND_ADVICE_CMD, CYNOLOGIST_CMD},
+                new String[]{REFUSAL_REASONS_CMD, CONTACT_ME_CMD},
+                new String[]{CALL_VOLUNTEER_CMD, BACK_TO_MAIN_MENU_CMD})
+                .resizeKeyboard(true);
+    }
+
+    /**
+     * Create menu buttons with recommendations about dog's carriage and home improvement
+     *
+     * @return buttons
+     */
+    private static ReplyKeyboardMarkup transportAndAdviceMenu() {
+        logger.info("Transportation and advice keyboard was called");
+        return new ReplyKeyboardMarkup(
+                new String[]{TRANSPORTING_CMD, ADVICE_CMD},
+                new String[]{BACK_TO_RECOMMENDATION_MENU_CMD}
+        )
+                .resizeKeyboard(true);
+    }
+
+    /**
+     * Create more menu buttons with home improvement advice for puppies, adults and disabled dogs
      *
      * @return buttons
      */
 
-//    private static InlineKeyboardMarkup shelterInfoButtons() {
-////        logger.info("Shelter info inline Keyboard was called");
-////        return new InlineKeyboardMarkup(
-////                new InlineKeyboardButton[]{
-////                        new InlineKeyboardButton("Кто мы").callbackData(ABOUT_US_CMD),
-////                        new InlineKeyboardButton("Адрес").callbackData(WORKING_HOURS_CMD)
-////                },
-////                new InlineKeyboardButton[]{
-////                        new InlineKeyboardButton("Безопасность").callbackData(SAFETY_RECOMMENDATION_CMD),
-////                        new InlineKeyboardButton("Связаться со мной").callbackData(CONTACT_ME_CMD)
-////
-////                });
-////    }
-    private static ReplyKeyboardMarkup shelterInfoButtons() {
-        logger.info("Shelter info inline Keyboard was called");
-        return new ReplyKeyboardMarkup(
-                new String[]{"Кто мы", "Адрес"},
-                new String[]{"Безопасность", "Связаться со мной"},
-                new String[]{"Главное меню ↩"})
-                .resizeKeyboard(true);
-    }
-
-//    private static Keyboard recommendationButtons() {
-//        logger.info("Recommendation inline Keyboard was called");
-//        return new ReplyKeyboardMarkup(
-//                new KeyboardButton[]{
-//                        new KeyboardButton("Знакомство с \uD83D\uDC36"),
-//                        new KeyboardButton("Документы \uD83D\uDCCB")
-//                },
-//                new KeyboardButton[]{
-//                        new KeyboardButton("Перевозка питомца \uD83D\uDE98\uD83D\uDC36"),
-//                        new KeyboardButton("Обустройство дома \uD83C\uDFE1\uD83D\uDC36")
-//
-//                },
-//                new KeyboardButton[]{
-//                        new KeyboardButton("Помощь кинолога \uD83D\uDE4B"),
-//                        new KeyboardButton("Причины отказа \uD83D\uDEAB")
-//                },
-//                new KeyboardButton[]{
-//                        new KeyboardButton("Связаться со мной \uD83D\uDCDE"),
-//                        new KeyboardButton("Позвать волонтера \uD83E\uDDCD")
-//                })
-//                .resizeKeyboard(true);
-//    }
-
-    private static ReplyKeyboardMarkup recommendationButtons() {
-        logger.info("Recommendation Keyboard was called");
-        return new ReplyKeyboardMarkup(
-                new String[]{"Знакомство с \uD83D\uDC36", "Документы \uD83D\uDCCB"},
-                new String[]{"Перевозка \uD83D\uDC36 и обустройство \uD83C\uDFE1", "Помощь кинолога \uD83D\uDE4B"},
-                new String[]{"Причины отказа \uD83D\uDEAB", "Связаться со мной"},
-                new String[]{"Позвать волонтера \uD83E\uDDCD", "Главное меню ↩"})
-                //     .oneTimeKeyboard(true)
-                .resizeKeyboard(true);
-    }
-//
-//    private static InlineKeyboardMarkup transportAndAdviceMenu() {
-//        logger.info("Transportation and advice inline Keyboard was called");
-//        return new InlineKeyboardMarkup(
-//                new InlineKeyboardButton("Транспортировка животного").callbackData(TRANSPORTING_CMD),
-//                new InlineKeyboardButton("Обустройство дома").callbackData(ADVICE_CMD));
-//    }
-
-    private static ReplyKeyboardMarkup transportAndAdviceMenu() {
-        logger.info("Transportation and advice inline Keyboard was called");
-        return new ReplyKeyboardMarkup(
-                new String[]{"Транспортировка животного", "Обустройство дома"},
-                new String[]{"Главное меню ↩"}
-        )
-                .resizeKeyboard(true);
-    }
-
-//    private static InlineKeyboardMarkup specificAdviceMenu() {
-//        logger.info("Specific advice inline Keyboard was called");
-//        return new InlineKeyboardMarkup(
-//                new InlineKeyboardButton("Щенок").callbackData(ADVICE_FOR_PUPPY_CMD),
-//                new InlineKeyboardButton("Взрослая собака").callbackData(ADVICE_FOR_ADULT_DOG_CMD),
-//                new InlineKeyboardButton("Собака с ОВ").callbackData(ADVICE_FOR_SPECIAL_DOG_CMD));
-//    }
-
     private static ReplyKeyboardMarkup specificAdviceMenu() {
-        logger.info("Specific advice inline Keyboard was called");
+        logger.info("Specific advice keyboard was called");
         return new ReplyKeyboardMarkup(
-                new String[]{"Щенок", "Взрослая собака", "Собака с ОВ"},
-                new String[]{"Главное меню ↩"}
+                new String[]{ADVICE_FOR_PUPPY_CMD, ADVICE_FOR_ADULT_DOG_CMD, ADVICE_FOR_SPECIAL_DOG_CMD},
+                new String[]{BACK_TO_TRANSPORT_AND_ADVICE_MENU_CMD}
         )
                 .resizeKeyboard(true);
     }
 
-    //    private static InlineKeyboardMarkup cynologistMenu() {
-//        logger.info("Cynologist inline Keyboard was called");
-//        return new InlineKeyboardMarkup(
-//                new InlineKeyboardButton[]{
-//                        new InlineKeyboardButton("Советы кинолога").callbackData(CYNOLOGIST_ADVICE_CMD),
-//                },
-//                new InlineKeyboardButton[]{
-//                        new InlineKeyboardButton("Контакты кинологов").callbackData(CYNOLOGIST_CONTACTS_CMD),
-//                });
-//    }
+    /**
+     * Create menu buttons with cynologists contacts and recommendations
+     *
+     * @return buttons
+     */
 
     private static ReplyKeyboardMarkup cynologistMenu() {
-        logger.info("Cynologist inline Keyboard was called");
+        logger.info("Cynologist keyboard was called");
         return new ReplyKeyboardMarkup(
-                new String[]{"Советы кинолога", "Контакты кинологов"},
-                new String[]{"Главное меню ↩"}
+                new String[]{CYNOLOGIST_ADVICE_CMD, CYNOLOGIST_CONTACTS_CMD},
+                new String[]{BACK_TO_RECOMMENDATION_MENU_CMD}
         )
                 .resizeKeyboard(true);
     }
-
 
     /**
      * Define user's chat id
