@@ -7,11 +7,17 @@ import java.util.Optional;
 
 public interface UserService {
 
+    User createUser(User user);
+
     User save(User user, long chatId);
 
     Optional<User> parse(String userDataMessage);
 
+    User getUserById(long id);
+
     User getUserByChatId(long chatId);
+
+    void deleteUserById(long id);
 
     void deleteUserByChatId(long chatId);
 

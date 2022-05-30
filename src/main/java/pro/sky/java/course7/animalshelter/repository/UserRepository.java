@@ -9,9 +9,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findUserByChatId(long chatId);
 
-    void deleteUserByChatId(Long chatId);
-
-
-
-
 }

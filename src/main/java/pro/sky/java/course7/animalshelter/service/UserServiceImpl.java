@@ -24,6 +24,18 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * Create a user in repository trough swagger or postman, without bot
+     * @param user - created by volunteer
+     * @return saved user, filled non-automatically
+     */
+
+    @Override
+    public User createUser(User user) {
+        logger.info("Was invoked method to create a user by volunteer");
+        return repository.save(user);
+    }
+
+    /**
      * Save created user in repository
      * @param user - created user
      * @param chatId - user's chat id
@@ -64,15 +76,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserById(long id) {
+        logger.info("Was invoked method to find a student by Id");
+        return repository.findById(id).orElse(null);
+    }
+
+    @Override
     public User getUserByChatId(long chatId) {
         logger.info("Was invoked method to find a student by chatId");
         return repository.findUserByChatId(chatId);
     }
 
+    @Override
+    public void deleteUserById(long id) {
+        logger.info("Was invoked method to delete a client by Id");
+        repository.deleteById(id);
+    }
+
 
     @Override
     public void deleteUserByChatId(long chatId) {
-        logger.info("Was invoked method to delete a client by Id");
+        logger.info("Was invoked method to delete a client by ChatId");
         repository.deleteById(repository.findUserByChatId(chatId).getId());
     }
 
