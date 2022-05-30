@@ -8,9 +8,19 @@ import java.util.Objects;
 public class User {
 
     public enum UserStatus {
+        USER,
+
         REQUESTED,
 
-        SHELTERED,
+        TRIAL,
+
+        TRIAL_14_MORE,
+
+        TRIAL_30_MORE,
+
+        APPROVED,
+
+        VOLUNTEER,
     }
 
     @Id
