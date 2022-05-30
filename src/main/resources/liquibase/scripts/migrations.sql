@@ -9,8 +9,8 @@ create table Client
     name         varchar(255) NOT NULL,
     phone_number varchar(255) NOT NULL,
     email        varchar(255) NOT NULL,
-    status       varchar(255) NOT NULL DEFAULT 'REQUESTED'
+    status       varchar(255) NOT NULL DEFAULT 'USER'
 );
 
 -- changeset Diana:2
-CREATE INDEX user_data_idx ON Client (user) WHERE status = 'REQUESTED';
+CREATE INDEX user_data_idx ON Client (user) WHERE status = 'USER';
