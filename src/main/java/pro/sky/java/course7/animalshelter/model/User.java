@@ -18,7 +18,7 @@ public class User {
 
         TRIAL_30_MORE,
 
-        APPROVED,
+        ADOPTER,
 
         VOLUNTEER,
     }
