@@ -3,6 +3,8 @@ package pro.sky.java.course7.animalshelter.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pro.sky.java.course7.animalshelter.model.CatAdopter;
+import pro.sky.java.course7.animalshelter.model.DogAdopter;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
@@ -22,6 +24,18 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User newUser = userService.createUser(user);
         return ResponseEntity.ok(newUser);
+    }
+
+    @PostMapping("/dog")
+    public ResponseEntity<User> createDogAdopter(@RequestBody DogAdopter dogAdopter) {
+        User newDogAdopter = userService.createDogAdopter(dogAdopter);
+        return ResponseEntity.ok(newDogAdopter);
+    }
+
+    @PostMapping("/cat")
+    public ResponseEntity<User> createCatAdopter(@RequestBody CatAdopter catAdopter) {
+        User newCatAdopter = userService.createCatAdopter(catAdopter);
+        return ResponseEntity.ok(newCatAdopter);
     }
 
     @GetMapping("/{id}")

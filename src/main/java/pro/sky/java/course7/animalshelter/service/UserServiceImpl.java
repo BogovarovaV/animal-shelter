@@ -3,7 +3,11 @@ package pro.sky.java.course7.animalshelter.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pro.sky.java.course7.animalshelter.model.CatAdopter;
+import pro.sky.java.course7.animalshelter.model.DogAdopter;
 import pro.sky.java.course7.animalshelter.model.User;
+import pro.sky.java.course7.animalshelter.repository.CatAdopterRepository;
+import pro.sky.java.course7.animalshelter.repository.DogAdopterRepository;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
 
 import java.util.Collection;
@@ -17,10 +21,15 @@ public class UserServiceImpl implements UserService {
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private static final String REGEX_BOT_MESSAGE = "([\\W+]+)(\\s)(\\+7\\d{3}[-.]?\\d{3}[-.]?\\d{4})(\\s)([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+)";
-    private final UserRepository repository;
 
-    public UserServiceImpl(UserRepository repository) {
+    private final UserRepository repository;
+    private final DogAdopterRepository dogAdopterRepository;
+    private final CatAdopterRepository catAdopterRepository;
+
+    public UserServiceImpl(UserRepository repository, DogAdopterRepository dogAdopterRepository, CatAdopterRepository catAdopterRepository) {
         this.repository = repository;
+        this.dogAdopterRepository = dogAdopterRepository;
+        this.catAdopterRepository = catAdopterRepository;
     }
 
     /**
@@ -104,5 +113,17 @@ public class UserServiceImpl implements UserService {
     public Collection<User> getAllUsers() {
         logger.info("Was invoked method to get a list of all users");
         return repository.findAll();
+    }
+
+    @Override
+    public User createDogAdopter(DogAdopter dogAdopter) {
+        logger.info("Was invoked method to create a dog adopter by volunteer");
+        return dogAdopterRepository.save(dogAdopter);
+    }
+
+    @Override
+    public User createCatAdopter(CatAdopter catAdopter) {
+        logger.info("Was invoked method to create a cat adopter by volunteer");
+        return catAdopterRepository.save(catAdopter);
     }
 }
