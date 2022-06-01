@@ -43,6 +43,8 @@ public class Report {
     @Type(type = "org.hibernate.type.ImageType")
     private byte[] data;
 
+    @OneToOne
+    public User user;
 
     @Enumerated(EnumType.STRING)
     private Report.ReportStatus status = Report.ReportStatus.SENT;

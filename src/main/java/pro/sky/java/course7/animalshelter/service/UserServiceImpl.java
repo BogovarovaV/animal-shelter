@@ -3,7 +3,11 @@ package pro.sky.java.course7.animalshelter.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pro.sky.java.course7.animalshelter.model.CatAdopter;
+import pro.sky.java.course7.animalshelter.model.DogAdopter;
 import pro.sky.java.course7.animalshelter.model.User;
+import pro.sky.java.course7.animalshelter.repository.CatAdopterRepository;
+import pro.sky.java.course7.animalshelter.repository.DogAdopterRepository;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
 
 import java.util.Collection;
@@ -17,10 +21,27 @@ public class UserServiceImpl implements UserService {
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private static final String REGEX_BOT_MESSAGE = "([\\W+]+)(\\s)(\\+7\\d{3}[-.]?\\d{3}[-.]?\\d{4})(\\s)([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+)";
-    private final UserRepository repository;
 
-    public UserServiceImpl(UserRepository repository) {
+    private final UserRepository repository;
+    private final DogAdopterRepository dogAdopterRepository;
+    private final CatAdopterRepository catAdopterRepository;
+
+    public UserServiceImpl(UserRepository repository, DogAdopterRepository dogAdopterRepository, CatAdopterRepository catAdopterRepository) {
         this.repository = repository;
+        this.dogAdopterRepository = dogAdopterRepository;
+        this.catAdopterRepository = catAdopterRepository;
+    }
+
+    /**
+     * Create a user in repository trough swagger or postman, without bot
+     * @param user - created by volunteer
+     * @return saved user, filled non-automatically
+     */
+
+    @Override
+    public User createUser(User user) {
+        logger.info("Was invoked method to create a user by volunteer");
+        return repository.save(user);
     }
 
     /**
@@ -64,15 +85,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserById(long id) {
+        logger.info("Was invoked method to find a student by Id");
+        return repository.findById(id).orElse(null);
+    }
+
+    @Override
     public User getUserByChatId(long chatId) {
         logger.info("Was invoked method to find a student by chatId");
         return repository.findUserByChatId(chatId);
     }
 
+    @Override
+    public void deleteUserById(long id) {
+        logger.info("Was invoked method to delete a client by Id");
+        repository.deleteById(id);
+    }
+
 
     @Override
     public void deleteUserByChatId(long chatId) {
-        logger.info("Was invoked method to delete a client by Id");
+        logger.info("Was invoked method to delete a client by ChatId");
         repository.deleteById(repository.findUserByChatId(chatId).getId());
     }
 
@@ -80,5 +113,17 @@ public class UserServiceImpl implements UserService {
     public Collection<User> getAllUsers() {
         logger.info("Was invoked method to get a list of all users");
         return repository.findAll();
+    }
+
+    @Override
+    public User createDogAdopter(DogAdopter dogAdopter) {
+        logger.info("Was invoked method to create a dog adopter by volunteer");
+        return dogAdopterRepository.save(dogAdopter);
+    }
+
+    @Override
+    public User createCatAdopter(CatAdopter catAdopter) {
+        logger.info("Was invoked method to create a cat adopter by volunteer");
+        return catAdopterRepository.save(catAdopter);
     }
 }
