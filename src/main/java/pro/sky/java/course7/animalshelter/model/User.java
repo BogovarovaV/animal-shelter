@@ -37,8 +37,12 @@ public class User {
 
     private String email;
 
+    private boolean hasDog;
+
+    private boolean hasCat;
+
     @Enumerated(EnumType.STRING)
-    private UserStatus status = UserStatus.REQUESTED;
+    private UserStatus status = UserStatus.USER;
 
 
     public User() {
@@ -48,6 +52,30 @@ public class User {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
+    }
+
+    public User(String name, String phoneNumber, String email, boolean hasDog, boolean hasCat) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.hasDog = false;
+        this.hasCat = false;
+    }
+
+    public boolean isHasDog() {
+        return hasDog;
+    }
+
+    public void setHasDog(boolean hasDog) {
+        this.hasDog = hasDog;
+    }
+
+    public boolean isHasCat() {
+        return hasCat;
+    }
+
+    public void setHasCat(boolean hasCat) {
+        this.hasCat = hasCat;
     }
 
     public UserStatus getStatus() {
@@ -103,22 +131,25 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return getId() == user.getId() && getChatId() == user.getChatId() && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus();
+        return getId() == user.getId() && getChatId() == user.getChatId() && isHasDog() == user.isHasDog() && isHasCat() == user.isHasCat() && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus());
+        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), isHasDog(), isHasCat(), getStatus());
     }
+
 
     @Override
     public String toString() {
-        return "Client{" +
+        return "User{" +
                 "id=" + id +
                 ", chatId=" + chatId +
                 ", name='" + name + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
+                ", hasDog=" + hasDog +
+                ", hasCat=" + hasCat +
                 ", status=" + status +
                 '}';
     }
