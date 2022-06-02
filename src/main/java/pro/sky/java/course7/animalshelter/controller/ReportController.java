@@ -12,19 +12,19 @@ import pro.sky.java.course7.animalshelter.service.ReportService;
 @RequestMapping("/report")
 public class ReportController {
 
-    private final ReportService reportService;
-
-    public ReportController(ReportService reportService) {
-        this.reportService = reportService;
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Report> getReportByUserId(@PathVariable Long id) {
-        Report report = reportService.getReportByUserId(id);
-        if (report == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(report);
-    }
+//    private final ReportService reportService;
+//
+//    public ReportController(ReportService reportService) {
+//        this.reportService = reportService;
+//    }
+//
+//    @GetMapping("/{id}")
+//    public ResponseEntity<Report> getReportByUserId(@PathVariable Long id) {
+//        Report report = reportService.getReportByUserId(id);
+//        if (report == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(report);
+//    }
 
 }

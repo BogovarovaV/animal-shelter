@@ -2,12 +2,14 @@ package pro.sky.java.course7.animalshelter.model;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "Client")
 public class User {
 
     public enum UserStatus {
+
         USER,
 
         REQUESTED,
@@ -37,13 +39,11 @@ public class User {
 
     private String email;
 
-    private boolean hasDog;
-
-    private boolean hasCat;
-
     @Enumerated(EnumType.STRING)
-    private UserStatus status = UserStatus.USER;
+    private UserStatus status;
 
+    @OneToMany(mappedBy = "user")
+    public Set<Report> reports;
 
     public User() {
     }
@@ -54,29 +54,6 @@ public class User {
         this.email = email;
     }
 
-    public User(String name, String phoneNumber, String email, boolean hasDog, boolean hasCat) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.hasDog = false;
-        this.hasCat = false;
-    }
-
-    public boolean isHasDog() {
-        return hasDog;
-    }
-
-    public void setHasDog(boolean hasDog) {
-        this.hasDog = hasDog;
-    }
-
-    public boolean isHasCat() {
-        return hasCat;
-    }
-
-    public void setHasCat(boolean hasCat) {
-        this.hasCat = hasCat;
-    }
 
     public UserStatus getStatus() {
         return status;
@@ -131,12 +108,12 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return getId() == user.getId() && getChatId() == user.getChatId() && isHasDog() == user.isHasDog() && isHasCat() == user.isHasCat() && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus();
+        return getId() == user.getId() && getChatId() == user.getChatId()  && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), isHasDog(), isHasCat(), getStatus());
+        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus());
     }
 
 
@@ -148,8 +125,6 @@ public class User {
                 ", name='" + name + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
-                ", hasDog=" + hasDog +
-                ", hasCat=" + hasCat +
                 ", status=" + status +
                 '}';
     }

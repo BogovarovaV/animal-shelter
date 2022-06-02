@@ -7,7 +7,7 @@ import pro.sky.java.course7.animalshelter.model.Report;
 import pro.sky.java.course7.animalshelter.repository.ReportRepository;
 
 @Service
-public class ReportServiceImpl implements ReportService{
+public class ReportServiceImpl implements ReportService {
 
     private final Logger logger = LoggerFactory.getLogger(ReportServiceImpl.class);
     private final ReportRepository repository;
@@ -16,9 +16,17 @@ public class ReportServiceImpl implements ReportService{
         this.repository = repository;
     }
 
+//    @Override
+//    public Report getReportByUserId(Long id) {
+//        logger.info("Was invoked method to find a report by User's Id");
+//        return this.repository.findReportByUserId(id).orElse(null);
+//    }
+
     @Override
-    public Report getReportByUserId(Long id) {
-        logger.info("Was invoked method to find a report by User's Id");
-        return this.repository.findReportByUserId(id).orElse(null);
+    public Report saveReport(Report report, long chatId) {
+        report.setUserChatId(chatId);
+        Report savedReport = repository.save(report);
+        logger.info("Client's report has been saved successfully: " + savedReport);
+        return savedReport;
     }
 }

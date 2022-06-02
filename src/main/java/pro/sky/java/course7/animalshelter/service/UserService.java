@@ -11,7 +11,13 @@ public interface UserService {
 
     User createUser(User user);
 
+    User editUser(User user, User.UserStatus status);
+
     User save(User user, long chatId);
+
+  //  User save(User user, long chatId, User.UserStatus status);
+
+    User edit(User user, long chatId, User.UserStatus status);
 
     Optional<User> parse(String userDataMessage);
 

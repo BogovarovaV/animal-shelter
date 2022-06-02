@@ -27,8 +27,8 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<User> editUser(@RequestBody User user) {
-        User editedStudent = userService.createUser(user);
+    public ResponseEntity<User> editUser(@RequestBody User user, @RequestParam User.UserStatus status) {
+        User editedStudent = userService.editUser(user, status);
         if (editedStudent == null) {
             return ResponseEntity.notFound().build();
         }
