@@ -513,7 +513,7 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                 userService.deleteUserByChatId(chatId);
                 User editedUser = userService.edit(parseResult.get(), chatId, currentStatus);
                 logger.info("Client's data has been edited successfully:" + editedUser);
-                outputMessage = new SendMessage(chatId, "Ваши данные успешно перезаписаны");
+                outputMessage = new SendMessage(chatId, "Ваши данные успешно перезаписаны!");
             }
         } else {
             logger.info("Invalid registration data");
