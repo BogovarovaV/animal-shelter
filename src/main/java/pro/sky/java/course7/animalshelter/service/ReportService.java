@@ -4,5 +4,9 @@ import pro.sky.java.course7.animalshelter.model.Report;
 
 public interface ReportService {
 
-    Report getReportByUserId(Long id);
+ //  Report getReportByUserId(Long id);
+
+
+
+    Report saveReport(Report report, long userChatId);
 }

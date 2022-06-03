@@ -3,17 +3,15 @@ package pro.sky.java.course7.animalshelter.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-//import pro.sky.java.course7.animalshelter.model.CatAdopter;
-//import pro.sky.java.course7.animalshelter.model.DogAdopter;
 import pro.sky.java.course7.animalshelter.model.User;
-//import pro.sky.java.course7.animalshelter.repository.CatAdopterRepository;
-//import pro.sky.java.course7.animalshelter.repository.DogAdopterRepository;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static pro.sky.java.course7.animalshelter.model.User.UserStatus.USER;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Create a user in repository trough swagger or postman, without bot
+     *
      * @param user - created by volunteer
      * @return saved user, filled non-automatically
      */
@@ -40,9 +39,19 @@ public class UserServiceImpl implements UserService {
         return repository.save(user);
     }
 
+    @Override
+    public User editUser(User user, User.UserStatus status) {
+        logger.info("Was invoked method to create a user by volunteer");
+     //   User result = repository.save(user);
+        user.setStatus(status);
+        logger.info("status in editUser" + status);
+        return repository.save(user);
+    }
+
     /**
      * Save created user in repository
-     * @param user - created user
+     *
+     * @param user   - created user
      * @param chatId - user's chat id
      * @return savedUser - user's data which was saved in repository
      */
@@ -50,13 +59,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user, long chatId) {
         user.setChatId(chatId);
+        user.setStatus(USER);
         User savedUser = repository.save(user);
-            logger.info("Client's data has been saved successfully: " + savedUser);
         return savedUser;
+    }
+
+    @Override
+    public User edit(User user, long chatId, User.UserStatus status) {
+        user.setChatId(chatId);
+        user.setStatus(status);
+        User editedUser = repository.save(user);
+        logger.info("Current status3: " + status);
+        logger.info("Client's data has been edited successfully: " + editedUser);
+        return editedUser;
     }
 
     /**
      * Parsing user's data to name, phone number, email
+     *
      * @param userDataMessage received message from user
      * @return parsing result
      */
@@ -82,13 +102,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(long id) {
-        logger.info("Was invoked method to find a student by Id");
+        logger.info("Was invoked method to find a user by Id");
         return repository.findById(id).orElse(null);
     }
 
     @Override
     public User getUserByChatId(long chatId) {
-        logger.info("Was invoked method to find a student by chatId");
+        logger.info("Was invoked method to find user by chatId");
         return repository.findUserByChatId(chatId);
     }
 
