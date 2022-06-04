@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import pro.sky.java.course7.animalshelter.model.Report;
 import pro.sky.java.course7.animalshelter.repository.ReportRepository;
 
+import java.util.List;
+
 @Service
 public class ReportServiceImpl implements ReportService {
 
@@ -16,11 +18,11 @@ public class ReportServiceImpl implements ReportService {
         this.repository = repository;
     }
 
-//    @Override
-//    public Report getReportByUserId(Long id) {
-//        logger.info("Was invoked method to find a report by User's Id");
-//        return this.repository.findReportByUserId(id).orElse(null);
-//    }
+    @Override
+    public List<Report> getReportsByUserChatId(Long userChatId) {
+        logger.info("Was invoked method to find a report by User's Id");
+        return this.repository.findByUserChatId(userChatId);
+    }
 
     @Override
     public Report saveReport(Report report, long chatId) {

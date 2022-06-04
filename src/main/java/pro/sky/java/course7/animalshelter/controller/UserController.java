@@ -3,8 +3,6 @@ package pro.sky.java.course7.animalshelter.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-//import pro.sky.java.course7.animalshelter.model.CatAdopter;
-//import pro.sky.java.course7.animalshelter.model.DogAdopter;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
@@ -27,19 +25,18 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<User> editUser(@RequestBody User user, @RequestParam User.UserStatus status) {
-        User editedStudent = userService.editUser(user, status);
+    public ResponseEntity<User> editUser(@RequestBody User user, @RequestParam long chatId, @RequestParam User.UserStatus status) {
+        User editedStudent = userService.edit(user, chatId, status);
         if (editedStudent == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(editedStudent);
-
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         User user = userService.getUserById(id);
-        if (user == null) {
+        if (userService.getUserById(id) == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(user);

@@ -37,10 +37,6 @@ public class Report {
 
     private LocalDateTime sentDate;
 
-//    @Lob
-//    @Type(type = "org.hibernate.type.ImageType")
-//    private byte[] data;
-
     @ManyToOne
     @JoinColumn(name = "userChatId", insertable = false, updatable = false)
     public User user;
@@ -97,14 +93,6 @@ public class Report {
     public void setSentDate(LocalDateTime sentDate) {
         this.sentDate = sentDate;
     }
-
-//    public byte[] getData() {
-//        return data;
-//    }
-//
-//    public void setData(byte[] data) {
-//        this.data = data;
-//    }
 
     public ReportStatus getStatus() {
         return status;

@@ -1,7 +1,4 @@
 package pro.sky.java.course7.animalshelter.service;
-
-//import pro.sky.java.course7.animalshelter.model.CatAdopter;
-//import pro.sky.java.course7.animalshelter.model.DogAdopter;
 import pro.sky.java.course7.animalshelter.model.User;
 
 import java.util.Collection;
@@ -11,11 +8,7 @@ public interface UserService {
 
     User createUser(User user);
 
-    User editUser(User user, User.UserStatus status);
-
     User save(User user, long chatId);
-
-  //  User save(User user, long chatId, User.UserStatus status);
 
     User edit(User user, long chatId, User.UserStatus status);
 
