@@ -39,15 +39,6 @@ public class UserServiceImpl implements UserService {
         return repository.save(user);
     }
 
-    @Override
-    public User editUser(User user, User.UserStatus status) {
-        logger.info("Was invoked method to create a user by volunteer");
-     //   User result = repository.save(user);
-        user.setStatus(status);
-        logger.info("status in editUser" + status);
-        return repository.save(user);
-    }
-
     /**
      * Save created user in repository
      *

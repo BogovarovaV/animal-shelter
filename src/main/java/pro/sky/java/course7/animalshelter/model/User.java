@@ -42,9 +42,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @OneToMany(mappedBy = "user")
-    public Set<Report> reports;
-
     public User() {
     }
 

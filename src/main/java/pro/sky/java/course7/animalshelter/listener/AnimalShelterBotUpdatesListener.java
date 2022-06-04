@@ -89,14 +89,6 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
-    private String getFilePath(List<PhotoSize> photos) {
-        String filePath = photos.stream()
-                .sorted(Comparator.comparing(PhotoSize::fileSize).reversed())
-                .findFirst()
-                .orElse(null).fileId();
-        return filePath;
-    }
-
     private File getFile(List<PhotoSize> photos) {
         GetFile request = new GetFile(photos.get(0).fileId());
         GetFileResponse getFileResponse = animalShelterBot.execute(request);
