@@ -2,22 +2,31 @@ package pro.sky.java.course7.animalshelter.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.Keyboard;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pro.sky.java.course7.animalshelter.model.Report;
 import pro.sky.java.course7.animalshelter.model.User;
+import pro.sky.java.course7.animalshelter.service.ReportService;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static pro.sky.java.course7.animalshelter.model.Report.ReportStatus.*;
 import static pro.sky.java.course7.animalshelter.service.Constants.*;
 
 
@@ -25,21 +34,23 @@ import static pro.sky.java.course7.animalshelter.service.Constants.*;
 public class AnimalShelterBotUpdatesListener implements UpdatesListener {
 
     private static final Logger logger = LoggerFactory.getLogger(AnimalShelterBotUpdatesListener.class);
-    private static boolean registrationRequire = false;
+    private Report report = new Report();
+    private static boolean registrationRequired = false;
 
     private final TelegramBot animalShelterBot;
     private final UserService userService;
+    private final ReportService reportService;
 
-    public AnimalShelterBotUpdatesListener(TelegramBot animalShelterBot, UserService userService) {
+    public AnimalShelterBotUpdatesListener(TelegramBot animalShelterBot, UserService userService, ReportService reportService) {
         this.animalShelterBot = animalShelterBot;
         this.userService = userService;
+        this.reportService = reportService;
     }
 
     @PostConstruct
     public void init() {
         animalShelterBot.setUpdatesListener(this);
     }
-
 
     /**
      * Check and process chat's updates
@@ -57,9 +68,32 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
             if (message != null && message.text() != null) {
                 String inputMessage = message.text();
                 handleMessage(inputMessage, extractChatId(message));
+            } else if (message != null && message.photo() != null) {
+                if (report.getStatus().equals(REQUIRED_PHOTO)) {
+                    logger.info("Photo has been sent by client");
+                    List<PhotoSize> photos = List.of(message.photo());
+                    File file = getFile(photos);
+                    String fullPath = animalShelterBot.getFullFilePath(file);
+                    LocalDateTime sentDate = LocalDateTime.now();
+                    report.setSentDate(sentDate);
+                    logger.info("Report was sent: " + sentDate);
+                    report.setFilePath(fullPath);
+                    logger.info("File path of report " + fullPath);
+                    report.setStatus(SENT);
+                    savingReport(extractChatId(message));
+                } else {
+                    handleMessage(UNKNOWN_FILE, extractChatId(message));
+                }
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
+    }
+
+    private File getFile(List<PhotoSize> photos) {
+        GetFile request = new GetFile(photos.get(0).fileId());
+        GetFileResponse getFileResponse = animalShelterBot.execute(request);
+        File file = getFileResponse.file();
+        return file;
     }
 
     /**
@@ -105,24 +139,33 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
             case CONTACT_ME_CMD:
                 logger.info(CONTACT_ME_CMD + " message has been received");
                 outputMessage = new SendMessage(chatId, CONTACT_ME_TEXT);
-                registrationRequire = true;
+                registrationRequired = true;
                 break;
             case CALL_VOLUNTEER_CMD:
-                logger.info(CALL_VOLUNTEER_CMD + "message has been received");
+                logger.info(CALL_VOLUNTEER_CMD + " message has been received");
                 outputMessage = new SendMessage(chatId, CALL_VOLUNTEER_TEXT);
                 break;
             case DOCUMENTS_CMD:
-                logger.info(DOCUMENTS_CMD + "message has been received");
+                logger.info(DOCUMENTS_CMD + " message has been received");
                 outputMessage = new SendMessage(chatId, DOCUMENTS_TEXT);
                 break;
             case HOW_TO_TAKE_CMD:
-                logger.info(HOW_TO_TAKE_CMD + "message has been received");
+                logger.info(HOW_TO_TAKE_CMD + " message has been received");
                 outputMessage = new SendMessage(chatId, "Кого бы вы хотели взять?")
                         .replyMarkup(chooseAnimal());
                 break;
             case REFUSAL_REASONS_CMD:
-                logger.info(REFUSAL_REASONS_CMD + "message has been received");
+                logger.info(REFUSAL_REASONS_CMD + " message has been received");
                 outputMessage = new SendMessage(chatId, REFUSAL_REASONS_TEXT);
+                break;
+            case SEND_REPORT_CMD:
+                logger.info(SEND_REPORT_CMD + " message has been received");
+                outputMessage = new SendMessage(chatId, REPORT_FORM);
+                report.setStatus(REQUIRED_TEXT);
+                break;
+            case UNKNOWN_FILE:
+                logger.info(UNKNOWN_FILE + " message has been received");
+                outputMessage = new SendMessage(chatId, UNKNOWN_FILE);
                 break;
 
             // buttons for dogs
@@ -234,12 +277,18 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                 break;
 
             default:
-                if (registrationRequire) {
+                if (registrationRequired) {
                     logger.info("Registration data has been sent");
                     outputMessage = registrationUser(inputMessage, chatId);
+                    registrationRequired = false;
+                } else if (report.getStatus().equals(REQUIRED_TEXT)) {
+                    outputMessage = new SendMessage(chatId, "Отлично, текст отчета у нас есть. Теперь пришлите фото питомца.\n" +
+                            "\n ❗Внимание❗ Без фото отчет не будет принят к рассмотрению!");
+                    report.setReportText(inputMessage);
+                    report.setStatus(REQUIRED_PHOTO);
                 } else {
                     logger.info(INVALID_NOTIFICATION_OR_CMD + " message has been received");
-                    outputMessage = new SendMessage(chatId, INVALID_NOTIFICATION_OR_CMD + "\n\n" + CALL_VOLUNTEER_TEXT);
+                    outputMessage = new SendMessage(chatId, INVALID_NOTIFICATION_OR_CMD);
                 }
         }
         try {
@@ -423,7 +472,6 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                 .resizeKeyboard(true);
     }
 
-
     /**
      * Define user's chat id
      *
@@ -453,16 +501,35 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
                 outputMessage = new SendMessage(chatId, SUCCESS_SAVING_TEXT);
             } else {
                 logger.info("Data is already exists, it will be restored");
+                User.UserStatus currentStatus = userService.getUserByChatId(chatId).getStatus();
                 userService.deleteUserByChatId(chatId);
-                userService.save(parseResult.get(), chatId);
-                outputMessage = new SendMessage(chatId, "Ваши данные успешно перезаписаны" );
+                User editedUser = userService.edit(parseResult.get(), chatId, currentStatus);
+                logger.info("Client's data has been edited successfully:" + editedUser);
+                outputMessage = new SendMessage(chatId, "Ваши данные успешно перезаписаны!");
             }
         } else {
             logger.info("Invalid registration data");
-            outputMessage = new SendMessage(chatId, CONTACT_ME_TEXT );
+            outputMessage = new SendMessage(chatId, CONTACT_ME_TEXT);
         }
         return outputMessage;
     }
 
+    private void savingReport(long chatId) {
+        logger.info("Saving report in process");
+        SendMessage reply;
+        if (report.getStatus().equals(SENT)) {
+            reportService.saveReport(report, chatId);
+            logger.info("Client's report saved");
+            reply = new SendMessage(chatId, "Спасибо! Ваш отчет отправлен волонтеру на проверку.");
+        } else {
+            reply = new SendMessage(chatId, INVALID_NOTIFICATION_OR_CMD);
+        }
+        try {
+            animalShelterBot.execute(reply);
+        } catch (Exception e) {
+            logger.info("Exception was thrown in saving report method ");
+            e.printStackTrace();
+        }
+    }
 }
 

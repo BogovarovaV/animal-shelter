@@ -3,17 +3,15 @@ package pro.sky.java.course7.animalshelter.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pro.sky.java.course7.animalshelter.model.CatAdopter;
-import pro.sky.java.course7.animalshelter.model.DogAdopter;
 import pro.sky.java.course7.animalshelter.model.User;
-import pro.sky.java.course7.animalshelter.repository.CatAdopterRepository;
-import pro.sky.java.course7.animalshelter.repository.DogAdopterRepository;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static pro.sky.java.course7.animalshelter.model.User.UserStatus.USER;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -23,17 +21,14 @@ public class UserServiceImpl implements UserService {
     private static final String REGEX_BOT_MESSAGE = "([\\W+]+)(\\s)(\\+7\\d{3}[-.]?\\d{3}[-.]?\\d{4})(\\s)([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+)";
 
     private final UserRepository repository;
-    private final DogAdopterRepository dogAdopterRepository;
-    private final CatAdopterRepository catAdopterRepository;
 
-    public UserServiceImpl(UserRepository repository, DogAdopterRepository dogAdopterRepository, CatAdopterRepository catAdopterRepository) {
+    public UserServiceImpl(UserRepository repository) {
         this.repository = repository;
-        this.dogAdopterRepository = dogAdopterRepository;
-        this.catAdopterRepository = catAdopterRepository;
     }
 
     /**
      * Create a user in repository trough swagger or postman, without bot
+     *
      * @param user - created by volunteer
      * @return saved user, filled non-automatically
      */
@@ -46,7 +41,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Save created user in repository
-     * @param user - created user
+     *
+     * @param user   - created user
      * @param chatId - user's chat id
      * @return savedUser - user's data which was saved in repository
      */
@@ -54,13 +50,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user, long chatId) {
         user.setChatId(chatId);
+        user.setStatus(USER);
         User savedUser = repository.save(user);
-            logger.info("Client's data has been saved successfully: " + savedUser);
         return savedUser;
+    }
+
+    @Override
+    public User edit(User user, long chatId, User.UserStatus status) {
+        user.setChatId(chatId);
+        user.setStatus(status);
+        User editedUser = repository.save(user);
+        logger.info("Current status3: " + status);
+        logger.info("Client's data has been edited successfully: " + editedUser);
+        return editedUser;
     }
 
     /**
      * Parsing user's data to name, phone number, email
+     *
      * @param userDataMessage received message from user
      * @return parsing result
      */
@@ -86,13 +93,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(long id) {
-        logger.info("Was invoked method to find a student by Id");
+        logger.info("Was invoked method to find a user by Id");
         return repository.findById(id).orElse(null);
     }
 
     @Override
     public User getUserByChatId(long chatId) {
-        logger.info("Was invoked method to find a student by chatId");
+        logger.info("Was invoked method to find user by chatId");
         return repository.findUserByChatId(chatId);
     }
 
@@ -115,15 +122,4 @@ public class UserServiceImpl implements UserService {
         return repository.findAll();
     }
 
-    @Override
-    public User createDogAdopter(DogAdopter dogAdopter) {
-        logger.info("Was invoked method to create a dog adopter by volunteer");
-        return dogAdopterRepository.save(dogAdopter);
-    }
-
-    @Override
-    public User createCatAdopter(CatAdopter catAdopter) {
-        logger.info("Was invoked method to create a cat adopter by volunteer");
-        return catAdopterRepository.save(catAdopter);
-    }
 }

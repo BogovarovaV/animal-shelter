@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pro.sky.java.course7.animalshelter.model.Report;
 import pro.sky.java.course7.animalshelter.service.ReportService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/report")
 public class ReportController {
@@ -18,9 +20,9 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Report> getReportByUserId(@PathVariable Long id) {
-        Report report = reportService.getReportByUserId(id);
+    @GetMapping("/{userChatId}")
+    public ResponseEntity getReportByUserChatId(@PathVariable Long userChatId) {
+        List<Report> report = reportService.getReportsByUserChatId(userChatId);
         if (report == null) {
             return ResponseEntity.notFound().build();
         }

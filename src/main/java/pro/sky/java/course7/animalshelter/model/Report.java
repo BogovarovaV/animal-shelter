@@ -1,17 +1,19 @@
 package pro.sky.java.course7.animalshelter.model;
 
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Objects;
 
 
 @Entity
+@Table(name = "report")
 public class Report {
 
     public enum ReportStatus {
+
+        REQUIRED_TEXT,
+
+        REQUIRED_PHOTO,
 
         SENT,
 
@@ -27,23 +29,16 @@ public class Report {
 
     private long id;
 
-    private long chatId;
+    private Long userChatId;
 
     private String reportText;
 
     private String filePath;
 
-    private long fileSize;
-
-    private String mediaType;
-
     private LocalDateTime sentDate;
 
-    @Lob
-    @Type(type = "org.hibernate.type.ImageType")
-    private byte[] data;
-
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "userChatId", insertable = false, updatable = false)
     public User user;
 
     @Enumerated(EnumType.STRING)
@@ -51,6 +46,12 @@ public class Report {
 
 
     public Report() {
+    }
+
+    public Report(String reportText, String filePath, LocalDateTime sentDate) {
+        this.reportText = reportText;
+        this.filePath = filePath;
+        this.sentDate = sentDate;
     }
 
     public long getId() {
@@ -61,12 +62,12 @@ public class Report {
         this.id = id;
     }
 
-    public long getChatId() {
-        return chatId;
+    public long getUserChatId() {
+        return userChatId;
     }
 
-    public void setChatId(long chatId) {
-        this.chatId = chatId;
+    public void setUserChatId(long userChatId) {
+        this.userChatId = userChatId;
     }
 
     public String getReportText() {
@@ -85,36 +86,12 @@ public class Report {
         this.filePath = filePath;
     }
 
-    public long getFileSize() {
-        return fileSize;
-    }
-
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
-
-    public String getMediaType() {
-        return mediaType;
-    }
-
-    public void setMediaType(String mediaType) {
-        this.mediaType = mediaType;
-    }
-
     public LocalDateTime getSentDate() {
         return sentDate;
     }
 
     public void setSentDate(LocalDateTime sentDate) {
         this.sentDate = sentDate;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
     }
 
     public ReportStatus getStatus() {
@@ -130,13 +107,12 @@ public class Report {
         if (this == o) return true;
         if (!(o instanceof Report)) return false;
         Report report = (Report) o;
-        return getId() == report.getId() && getChatId() == report.getChatId() && getFileSize() == report.getFileSize() && getReportText().equals(report.getReportText()) && getFilePath().equals(report.getFilePath()) && getMediaType().equals(report.getMediaType()) && getSentDate().equals(report.getSentDate()) && Arrays.equals(getData(), report.getData()) && getStatus() == report.getStatus();
+        return getId() == report.getId() && getUserChatId() == report.getUserChatId() && getReportText().equals(report.getReportText()) && getFilePath().equals(report.getFilePath()) && getSentDate().equals(report.getSentDate()) && getStatus() == report.getStatus();
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getId(), getChatId(), getReportText(), getFilePath(), getFileSize(), getMediaType(), getSentDate(), getStatus());
-        result = 31 * result + Arrays.hashCode(getData());
+        int result = Objects.hash(getId(), getUserChatId(), getReportText(), getFilePath(), getSentDate(), getStatus());
         return result;
     }
 
@@ -144,13 +120,10 @@ public class Report {
     public String toString() {
         return "Report{" +
                 "id=" + id +
-                ", chatId=" + chatId +
+                ", userChatId=" + userChatId +
                 ", reportText='" + reportText + '\'' +
                 ", filePath='" + filePath + '\'' +
-                ", fileSize=" + fileSize +
-                ", mediaType='" + mediaType + '\'' +
                 ", sentDate=" + sentDate +
-                ", data=" + Arrays.toString(data) +
                 ", status=" + status +
                 '}';
     }
