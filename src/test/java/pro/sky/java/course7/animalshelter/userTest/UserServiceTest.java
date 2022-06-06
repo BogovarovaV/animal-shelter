@@ -1,4 +1,4 @@
-package pro.sky.java.course7.animalshelter.userServiceTests;
+package pro.sky.java.course7.animalshelter.userTest;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,7 @@ import static pro.sky.java.course7.animalshelter.DataTest.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceMockTest {
+public class UserServiceTest {
 
     private User user1;
     private User user2;
@@ -69,4 +69,12 @@ public class UserServiceMockTest {
         when(userRepositoryMock.findUserByChatId(USER_CHAT_ID_2)).thenReturn(user2);
         assertDoesNotThrow(() -> out.deleteUserByChatId(USER_CHAT_ID_2));
     }
+
+    @Test
+    public void deleteUserByIdTest() {
+        doNothing().when(userRepositoryMock).deleteById(USER_CHAT_ID_2);
+        assertDoesNotThrow(() -> out.deleteUserById(USER_CHAT_ID_2));
+    }
+
+
 }

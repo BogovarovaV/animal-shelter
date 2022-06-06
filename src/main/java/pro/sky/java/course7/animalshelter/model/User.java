@@ -2,15 +2,29 @@ package pro.sky.java.course7.animalshelter.model;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "Client")
 public class User {
 
     public enum UserStatus {
+
+        USER,
+
         REQUESTED,
 
-        SHELTERED,
+        TRIAL,
+
+        TRIAL_14_MORE,
+
+        TRIAL_30_MORE,
+
+        CAT_ADOPTER,
+
+        DOG_ADOPTER,
+
+        VOLUNTEER,
     }
 
     @Id
@@ -26,8 +40,7 @@ public class User {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status = UserStatus.REQUESTED;
-
+    private UserStatus status;
 
     public User() {
     }
@@ -37,6 +50,7 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.email = email;
     }
+
 
     public UserStatus getStatus() {
         return status;
@@ -91,7 +105,7 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return getId() == user.getId() && getChatId() == user.getChatId() && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus();
+        return getId() == user.getId() && getChatId() == user.getChatId()  && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus();
     }
 
     @Override
@@ -99,9 +113,10 @@ public class User {
         return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus());
     }
 
+
     @Override
     public String toString() {
-        return "Client{" +
+        return "User{" +
                 "id=" + id +
                 ", chatId=" + chatId +
                 ", name='" + name + '\'' +
