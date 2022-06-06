@@ -10,7 +10,7 @@ public interface UserService {
 
     User save(User user, long chatId);
 
-    User edit(User user, long chatId, User.UserStatus status);
+    User edit(User user, long id, long chatId, User.UserStatus status);
 
     Optional<User> parse(String userDataMessage);
 

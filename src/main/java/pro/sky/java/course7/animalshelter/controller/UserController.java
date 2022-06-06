@@ -25,12 +25,12 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<User> editUser(@RequestBody User user, @RequestParam long chatId, @RequestParam User.UserStatus status) {
-        User editedStudent = userService.edit(user, chatId, status);
-        if (editedStudent == null) {
+    public ResponseEntity<User> editUser(@RequestBody User user, @RequestParam long id, @RequestParam long chatId, @RequestParam User.UserStatus status) {
+        User editedUser = userService.edit(user, id, chatId, status);
+        if (editedUser == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(editedStudent);
+        return ResponseEntity.ok(editedUser);
     }
 
     @GetMapping("/{id}")

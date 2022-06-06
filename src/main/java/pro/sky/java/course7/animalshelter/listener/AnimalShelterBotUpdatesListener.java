@@ -502,8 +502,10 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
             } else {
                 logger.info("Data is already exists, it will be restored");
                 User.UserStatus currentStatus = userService.getUserByChatId(chatId).getStatus();
-                userService.deleteUserByChatId(chatId);
-                User editedUser = userService.edit(parseResult.get(), chatId, currentStatus);
+            //    userService.deleteUserByChatId(chatId);
+                User editedUser = userService.edit(parseResult.get(),
+                        userService.getUserByChatId(chatId).getId(),
+                        chatId, currentStatus);
                 logger.info("Client's data has been edited successfully:" + editedUser);
                 outputMessage = new SendMessage(chatId, "Ваши данные успешно перезаписаны!");
             }

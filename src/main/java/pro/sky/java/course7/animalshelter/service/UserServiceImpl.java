@@ -56,8 +56,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User edit(User user, long chatId, User.UserStatus status) {
+    public User edit(User user, long id, long chatId, User.UserStatus status) {
         user.setChatId(chatId);
+        user.setId(id);
         user.setStatus(status);
         User editedUser = repository.save(user);
         logger.info("Current status3: " + status);
