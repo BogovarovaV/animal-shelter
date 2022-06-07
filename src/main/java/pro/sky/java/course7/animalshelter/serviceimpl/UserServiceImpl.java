@@ -1,10 +1,11 @@
-package pro.sky.java.course7.animalshelter.service;
+package pro.sky.java.course7.animalshelter.serviceimpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
+import pro.sky.java.course7.animalshelter.service.UserService;
 
 import java.util.Collection;
 import java.util.Optional;

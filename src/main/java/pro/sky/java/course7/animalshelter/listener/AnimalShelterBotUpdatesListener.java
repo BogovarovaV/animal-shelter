@@ -22,12 +22,11 @@ import pro.sky.java.course7.animalshelter.service.UserService;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import static pro.sky.java.course7.animalshelter.model.Report.ReportStatus.*;
-import static pro.sky.java.course7.animalshelter.service.Constants.*;
+import static pro.sky.java.course7.animalshelter.constants.Constants.*;
 
 
 @Service

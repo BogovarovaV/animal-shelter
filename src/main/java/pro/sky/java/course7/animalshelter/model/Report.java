@@ -38,7 +38,7 @@ public class Report {
     private LocalDateTime sentDate;
 
     @ManyToOne
-    @JoinColumn(name = "userChatId", insertable = false, updatable = false)
+    @JoinColumn(name = "user_chat_id", insertable = false, updatable = false)
     public User user;
 
     @Enumerated(EnumType.STRING)

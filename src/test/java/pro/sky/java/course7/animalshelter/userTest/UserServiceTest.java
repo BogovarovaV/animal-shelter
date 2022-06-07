@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
-import pro.sky.java.course7.animalshelter.service.UserServiceImpl;
+import pro.sky.java.course7.animalshelter.serviceimpl.UserServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
