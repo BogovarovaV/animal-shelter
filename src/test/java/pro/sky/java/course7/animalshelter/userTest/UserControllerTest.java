@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.java.course7.animalshelter.controller.UserController;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
-import pro.sky.java.course7.animalshelter.service.UserServiceImpl;
+import pro.sky.java.course7.animalshelter.serviceimpl.UserServiceImpl;
 
 import java.util.Arrays;
 import java.util.List;

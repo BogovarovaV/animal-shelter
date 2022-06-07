@@ -2,10 +2,11 @@ package pro.sky.java.course7.animalshelter.model;
 
 import javax.persistence.*;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "Client")
+@SecondaryTable(name = "Dog_adopters")
+@SecondaryTable(name ="Cat_adopters")
 public class User {
 
     public enum UserStatus {
@@ -42,6 +43,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    @ManyToOne
+    @JoinColumn (name = "animal_type", table = "Dog_adopters")
+    @JoinColumn (name = "animal_type", table = "Cat_adopters")
+    private AnimalTypes animalTypes;
+
     public User() {
     }
 
@@ -49,6 +55,14 @@ public class User {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
+    }
+
+    public AnimalTypes getAnimalTypes() {
+        return animalTypes;
+    }
+
+    public void setAnimalTypes(AnimalTypes animalTypes) {
+        this.animalTypes = animalTypes;
     }
 
 
@@ -105,14 +119,13 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return getId() == user.getId() && getChatId() == user.getChatId()  && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus();
+        return getId() == user.getId() && getChatId() == user.getChatId() && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus() && getAnimalTypes().equals(user.getAnimalTypes());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus());
+        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus(), getAnimalTypes());
     }
-
 
     @Override
     public String toString() {
@@ -123,6 +136,7 @@ public class User {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", status=" + status +
+                ", animalTypes=" + animalTypes +
                 '}';
     }
 }

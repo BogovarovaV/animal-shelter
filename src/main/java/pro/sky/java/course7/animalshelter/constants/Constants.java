@@ -1,4 +1,4 @@
-package pro.sky.java.course7.animalshelter.service;
+package pro.sky.java.course7.animalshelter.constants;
 
 public interface Constants {
 
