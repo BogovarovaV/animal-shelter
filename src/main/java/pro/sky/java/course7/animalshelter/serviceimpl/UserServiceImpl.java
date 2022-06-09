@@ -1,8 +1,11 @@
 package pro.sky.java.course7.animalshelter.serviceimpl;
 
+import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pro.sky.java.course7.animalshelter.model.Animal;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
 import pro.sky.java.course7.animalshelter.service.UserService;
@@ -12,7 +15,9 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static pro.sky.java.course7.animalshelter.model.User.UserStatus.USER;
+import static pro.sky.java.course7.animalshelter.constants.Constants.CONTACT_ME_TEXT;
+import static pro.sky.java.course7.animalshelter.constants.Constants.SUCCESS_SAVING_TEXT;
+import static pro.sky.java.course7.animalshelter.model.User.UserStatus.GUEST;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -51,7 +56,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user, long chatId) {
         user.setChatId(chatId);
-        user.setStatus(USER);
+        user.setStatus(GUEST);
         User savedUser = repository.save(user);
         return savedUser;
     }
@@ -61,6 +66,7 @@ public class UserServiceImpl implements UserService {
         user.setChatId(chatId);
         user.setId(id);
         user.setStatus(status);
+ //       user.setAnimal();
         User editedUser = repository.save(user);
         logger.info("Current status3: " + status);
         logger.info("Client's data has been edited successfully: " + editedUser);
@@ -94,6 +100,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String registrationUser(String inputMessage, Long chatId) {
+        String outputMessage;
+        Optional<User> parseResult = parse(inputMessage);
+        if (parseResult.isPresent()) {
+            if (getUserByChatId(chatId) == null) {
+                logger.info("Parse result is valid");
+                save(parseResult.get(), chatId);
+                outputMessage= SUCCESS_SAVING_TEXT;
+            } else {
+                logger.info("Data is already exists, it will be restored");
+                User.UserStatus currentStatus = getUserByChatId(chatId).getStatus();
+             //   Animal.AnimalTypes type = get
+                User editedUser = edit(parseResult.get(),
+                        getUserByChatId(chatId).getId(),
+                        chatId, currentStatus);
+                logger.info("Client's data has been edited successfully:" + editedUser);
+                outputMessage = "Ваши данные успешно перезаписаны!";
+            }
+        } else {
+            logger.info("Invalid registration data");
+            outputMessage = CONTACT_ME_TEXT;
+        }
+        return outputMessage;
+    }
+
+    @Override
     public User getUserById(long id) {
         logger.info("Was invoked method to find a user by Id");
         return repository.findById(id).orElse(null);
@@ -107,14 +139,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(long id) {
-        logger.info("Was invoked method to delete a client by Id");
+        logger.info("Was invoked method to delete a quest by Id");
         repository.deleteById(id);
     }
 
 
     @Override
     public void deleteUserByChatId(long chatId) {
-        logger.info("Was invoked method to delete a client by ChatId");
+        logger.info("Was invoked method to delete a quest by ChatId");
         repository.deleteById(repository.findUserByChatId(chatId).getId());
     }
 

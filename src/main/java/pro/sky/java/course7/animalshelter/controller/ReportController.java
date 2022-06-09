@@ -14,19 +14,19 @@ import java.util.List;
 @RequestMapping("/report")
 public class ReportController {
 
-    private final ReportService reportService;
-
-    public ReportController(ReportService reportService) {
-        this.reportService = reportService;
-    }
-
-    @GetMapping("/{userChatId}")
-    public ResponseEntity getReportByUserChatId(@PathVariable Long userChatId) {
-        List<Report> report = reportService.getReportsByUserChatId(userChatId);
-        if (report == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(report);
-    }
+//    private final ReportService reportService;
+//
+//    public ReportController(ReportService reportService) {
+//        this.reportService = reportService;
+//    }
+//
+//    @GetMapping("/{userChatId}")
+//    public ResponseEntity getReportByUserChatId(@PathVariable Long userChatId) {
+//        List<Report> report = reportService.getReportsByUserChatId(userChatId);
+//        if (report == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(report);
+//    }
 
 }

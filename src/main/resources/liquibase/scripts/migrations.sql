@@ -1,67 +1,55 @@
 -- liquibase formatted sql
 
 -- changeset Diana:1
-create table Client
-(
 
-    id           serial       NOT NULL PRIMARY KEY,
-    chat_id      bigint       NOT NULL,
+CREATE TABLE animal
+(
+    id   SERIAL       NOT NULL,
+    type VARCHAR(255) NOT NULL DEFAULT 'CAT',
+    CONSTRAINT animal_primary_key PRIMARY KEY (type)
+);
+
+INSERT INTO animal
+values (1, 'CAT');
+INSERT INTO animal
+values (2, 'DOG');
+
+
+CREATE TABLE quest
+(
+    id           serial       NOT NULL,
+    chat_id      BIGINT       NOT NULL,
     name         varchar(255) NOT NULL,
     phone_number varchar(255) NOT NULL,
     email        varchar(255) NOT NULL,
-    status       varchar(255) NOT NULL DEFAULT 'USER'
+    status       varchar(255) NOT NULL DEFAULT 'GUEST',
+    animal_type  varchar(255)  REFERENCES animal (type),
+    CONSTRAINT cat_shelter_client_primary_key PRIMARY KEY (id)
 );
 
--- changeset Ann:1
-
-ALTER TABLE Client
-    ADD CONSTRAINT chat_id_unique UNIQUE (chat_id);
-
-CREATE TABLE report
+CREATE TABLE dog_adopter
 (
-    id           serial       NOT NULL PRIMARY KEY,
-    user_chat_id BIGINT       NOT NULL REFERENCES Client (chat_id),
-    report_text  TEXT         NOT NULL,
-    file_path    TEXT         NOT NULL,
-    sent_date    TIMESTAMP WITH TIME ZONE,
-    status       varchar(255) NOT NULL DEFAULT 'DECLINED'
-);
+    CHECK (animal_type = 'DOG')
+) INHERITS (quest);
 
--- changeset Diana:2
-
-CREATE TABLE Dog_adopters
-
+CREATE TABLE cat_adopter
 (
-    id           serial       NOT NULL PRIMARY KEY,
-    user_chat_id BIGINT       NOT NULL REFERENCES Client (chat_id),
-    name         varchar(255) NOT NULL,
-    phone_number varchar(255) NOT NULL,
-    email        varchar(255) NOT NULL,
-    status       varchar(255) NOT NULL DEFAULT 'REQUESTED',
-    animal_type  varchar(255) NOT NULL DEFAULT 'DOG'
-);
+    CHECK (animal_type = 'CAT')
+) INHERITS (quest);
 
--- changeset Diana:3
 
-CREATE INDEX Dog_adopters_index on Dog_adopters (animal_type);
 
--- changeset Diana:4
 
-CREATE TABLE Cat_adopters
 
-(
-    id           serial       NOT NULL PRIMARY KEY,
-    user_chat_id BIGINT       NOT NULL REFERENCES Client (chat_id),
-    name         varchar(255) NOT NULL,
-    phone_number varchar(255) NOT NULL,
-    email        varchar(255) NOT NULL,
-    status       varchar(255) NOT NULL DEFAULT 'REQUESTED',
-    animal_type  varchar(255) NOT NULL DEFAULT 'CAT'
-);
 
--- changeset Diana:5
 
-CREATE INDEX Cat_adopters_index on Cat_adopters (animal_type);
+
+
+
+
+
+
+
 
 
 

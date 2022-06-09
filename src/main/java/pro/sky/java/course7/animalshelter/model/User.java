@@ -4,49 +4,40 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Client")
-@SecondaryTable(name = "Dog_adopters")
-@SecondaryTable(name ="Cat_adopters")
+@Table(name = "quest")
 public class User {
 
     public enum UserStatus {
 
-        USER,
-
-        REQUESTED,
-
-        TRIAL,
-
-        TRIAL_14_MORE,
-
-        TRIAL_30_MORE,
-
-        CAT_ADOPTER,
-
-        DOG_ADOPTER,
-
-        VOLUNTEER,
+        GUEST,
+        ADOPTER_ON_TRIAL,
+        OWNER
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private long id;
 
+    @Column(name = "chatId")
     private long chatId;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "email")
     private String email;
+
+    @ManyToOne
+    @JoinColumn(name = "animal_type", referencedColumnName = "type")
+    private Animal animal;
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @ManyToOne
-    @JoinColumn (name = "animal_type", table = "Dog_adopters")
-    @JoinColumn (name = "animal_type", table = "Cat_adopters")
-    private AnimalTypes animalTypes;
 
     public User() {
     }
@@ -57,14 +48,20 @@ public class User {
         this.email = email;
     }
 
-    public AnimalTypes getAnimalTypes() {
-        return animalTypes;
+    public User(String name, String phoneNumber, String email, Animal animal) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.animal = animal;
     }
 
-    public void setAnimalTypes(AnimalTypes animalTypes) {
-        this.animalTypes = animalTypes;
+    public Animal getAnimal() {
+        return animal;
     }
 
+    public void setAnimal(Animal animal) {
+        this.animal = animal;
+    }
 
     public UserStatus getStatus() {
         return status;
@@ -119,12 +116,12 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return getId() == user.getId() && getChatId() == user.getChatId() && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus() && getAnimalTypes().equals(user.getAnimalTypes());
+        return getId() == user.getId() && getChatId() == user.getChatId() && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus() && getAnimal().equals(user.getAnimal());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus(), getAnimalTypes());
+        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus(), getAnimal());
     }
 
     @Override
@@ -136,7 +133,7 @@ public class User {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", status=" + status +
-                ", animalTypes=" + animalTypes +
+                ", animal=" + animal +
                 '}';
     }
 }

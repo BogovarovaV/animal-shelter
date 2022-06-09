@@ -7,6 +7,7 @@ import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<User> editUser(@RequestBody User user, @RequestParam long id, @RequestParam long chatId, @RequestParam User.UserStatus status) {
+    public ResponseEntity<User> editUser(@RequestBody (required = false)User user, @RequestParam long id, @RequestParam long chatId, @RequestParam User.UserStatus status) {
         User editedUser = userService.edit(user, id, chatId, status);
         if (editedUser == null) {
             return ResponseEntity.notFound().build();
