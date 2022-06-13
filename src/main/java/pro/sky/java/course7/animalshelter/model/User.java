@@ -1,10 +1,13 @@
 package pro.sky.java.course7.animalshelter.model;
 
+
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "quest")
+@Table(name = "client")
 public class User {
 
     public enum UserStatus {
@@ -19,7 +22,7 @@ public class User {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "chatId")
+    @Column(name = "chat_id")
     private long chatId;
 
     @Column(name = "name")
@@ -31,13 +34,21 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
     @ManyToOne
     @JoinColumn(name = "animal_type", referencedColumnName = "type")
     private Animal animal;
 
-    @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<Report> reportList;
 
+    @Column(name = "start_trial_date")
+    private LocalDate startTrialDate;
+
+    @Column (name = "end_trial_date")
+    private LocalDate endTrialDate;
 
     public User() {
     }
@@ -111,17 +122,43 @@ public class User {
         this.email = email;
     }
 
+//    public List<Report> getReportList() {
+//        return reportList;
+//    }
+
+ //   public void setReportList(List<Report> reportList) {
+//        this.reportList = reportList;
+//    }
+
+    public LocalDate getStartTrialDate() {
+        return startTrialDate;
+    }
+
+    public void setStartTrialDate(LocalDate startTrialDate) {
+        this.startTrialDate = startTrialDate;
+    }
+
+    public LocalDate getEndTrialDate() {
+        return endTrialDate;
+    }
+
+    public void setEndTrialDate(LocalDate endTrialDate) {
+        this.endTrialDate = endTrialDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return getId() == user.getId() && getChatId() == user.getChatId() && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus() && getAnimal().equals(user.getAnimal());
+        return id == user.id && chatId == user.chatId && Objects.equals(name, user.name) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(email, user.email) && status == user.status && Objects.equals(animal, user.animal)// && Objects.equals(reportList, user.reportList)
+         && Objects.equals(startTrialDate, user.startTrialDate) && Objects.equals(endTrialDate, user.endTrialDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus(), getAnimal());
+        return Objects.hash(id, chatId, name, phoneNumber, email, status, animal,// reportList,
+                 startTrialDate, endTrialDate);
     }
 
     @Override
@@ -134,6 +171,9 @@ public class User {
                 ", email='" + email + '\'' +
                 ", status=" + status +
                 ", animal=" + animal +
+ //               ", reportList=" + reportList +
+                ", startTrialDate=" + startTrialDate +
+                ", endTrialDate=" + endTrialDate +
                 '}';
     }
 }

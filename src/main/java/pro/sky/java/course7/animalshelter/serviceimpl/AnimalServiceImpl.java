@@ -17,9 +17,11 @@ public class AnimalServiceImpl implements AnimalService {
         this.animalRepository = animalRepository;
     }
 
+
     @Override
     public Animal getAnimalByName(Animal.AnimalTypes type) {
 
         return animalRepository.getAnimalBy(type);
     }
+
 }

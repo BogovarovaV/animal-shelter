@@ -1,11 +1,15 @@
 package pro.sky.java.course7.animalshelter.controller;
 
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import pro.sky.java.course7.animalshelter.model.Animal;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -20,17 +24,19 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User newUser = userService.createUser(user);
-        return ResponseEntity.ok(newUser);
+    public ResponseEntity<User> createUser(@RequestBody User user, @RequestParam Animal.AnimalTypes type) {
+        if (user != null) {
+            User newUser = userService.createUserByVolunteer(user,type);
+            return ResponseEntity.ok(newUser);
+        } else return ResponseEntity.noContent().build();
     }
 
     @PutMapping
-    public ResponseEntity<User> editUser(@RequestBody (required = false)User user, @RequestParam long id, @RequestParam long chatId, @RequestParam User.UserStatus status) {
-        User editedUser = userService.edit(user, id, chatId, status);
-        if (editedUser == null) {
+    public ResponseEntity<User> editUser(@RequestBody User user, @RequestParam Animal.AnimalTypes type) {
+        if (user == null) {
             return ResponseEntity.notFound().build();
         }
+        User editedUser = userService.createUserByVolunteer(user, type);
         return ResponseEntity.ok(editedUser);
     }
 

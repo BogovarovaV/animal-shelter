@@ -5,55 +5,43 @@
 CREATE TABLE animal
 (
     id   SERIAL       NOT NULL,
-    type VARCHAR(255) NOT NULL DEFAULT 'CAT',
+    type VARCHAR(255) NOT NULL,
     CONSTRAINT animal_primary_key PRIMARY KEY (type)
 );
 
 INSERT INTO animal
 values (1, 'CAT');
+
 INSERT INTO animal
 values (2, 'DOG');
 
+INSERT INTO animal
+values (3, 'NO_ANIMAL');
 
-CREATE TABLE quest
+CREATE TABLE client
 (
-    id           serial       NOT NULL,
-    chat_id      BIGINT       NOT NULL,
-    name         varchar(255) NOT NULL,
-    phone_number varchar(255) NOT NULL,
-    email        varchar(255) NOT NULL,
-    status       varchar(255) NOT NULL DEFAULT 'GUEST',
-    animal_type  varchar(255)  REFERENCES animal (type),
-    CONSTRAINT cat_shelter_client_primary_key PRIMARY KEY (id)
+    id               serial       NOT NULL,
+    chat_id          BIGINT       NOT NULL,
+    name             varchar(255) NOT NULL,
+    phone_number     varchar(255) NOT NULL,
+    email            varchar(255) NOT NULL,
+    status           varchar(255) NOT NULL,
+    animal_type      varchar(255) REFERENCES animal (type),
+    start_trial_date DATE DEFAULT NULL,
+    end_trial_date   DATE DEFAULT NULL,
+    CONSTRAINT user_primary_key PRIMARY KEY (id)
 );
 
-CREATE TABLE dog_adopter
+CREATE TABLE reporting
 (
-    CHECK (animal_type = 'DOG')
-) INHERITS (quest);
-
-CREATE TABLE cat_adopter
-(
-    CHECK (animal_type = 'CAT')
-) INHERITS (quest);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    id          serial       NOT NULL,
+    id_user     BIGINT       NOT NULL REFERENCES client (id),
+    report_text TEXT         NOT NULL,
+    file_path   TEXT         NOT NULL,
+    file_size   BIGINT       NOT NULL,
+ --   preview     OID          NOT NULL,
+    sent_date   DATE,
+    status      varchar(255) NOT NULL DEFAULT 'DECLINED',
+    CONSTRAINT report_primary_key PRIMARY KEY (id)
+);
 

@@ -3,6 +3,7 @@ package pro.sky.java.course7.animalshelter.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
@@ -16,19 +17,22 @@ public class Animal implements Serializable {
         DOG,
 
         CAT,
+
+        NO_ANIMAL
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonIgnore
     private long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private AnimalTypes type;
 
+    @OneToMany(mappedBy = "animal",cascade = CascadeType.ALL)
     @JsonIgnore
-    @OneToMany(mappedBy = "animal")
     public Set<User> users;
 
     public Animal() {
