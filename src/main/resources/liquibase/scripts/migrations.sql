@@ -1,71 +1,47 @@
 -- liquibase formatted sql
 
 -- changeset Diana:1
-create table Client
-(
 
-    id           serial       NOT NULL PRIMARY KEY,
-    chat_id      bigint       NOT NULL,
-    name         varchar(255) NOT NULL,
-    phone_number varchar(255) NOT NULL,
-    email        varchar(255) NOT NULL,
-    status       varchar(255) NOT NULL DEFAULT 'USER'
+CREATE TABLE animal
+(
+    id   SERIAL       NOT NULL,
+    type VARCHAR(255) NOT NULL,
+    CONSTRAINT animal_primary_key PRIMARY KEY (type)
 );
 
--- changeset Ann:1
+INSERT INTO animal
+values (1, 'CAT');
 
-ALTER TABLE Client
-    ADD CONSTRAINT chat_id_unique UNIQUE (chat_id);
+INSERT INTO animal
+values (2, 'DOG');
 
-CREATE TABLE report
+INSERT INTO animal
+values (3, 'NO_ANIMAL');
+
+CREATE TABLE client
 (
-    id           serial       NOT NULL PRIMARY KEY,
-    user_chat_id BIGINT       NOT NULL REFERENCES Client (chat_id),
-    report_text  TEXT         NOT NULL,
-    file_path    TEXT         NOT NULL,
-    sent_date    TIMESTAMP WITH TIME ZONE,
-    status       varchar(255) NOT NULL DEFAULT 'DECLINED'
+    id               serial       NOT NULL,
+    chat_id          BIGINT       NOT NULL,
+    name             varchar(255) NOT NULL,
+    phone_number     varchar(255) NOT NULL,
+    email            varchar(255) NOT NULL,
+    status           varchar(255) NOT NULL,
+    animal_type      varchar(255) REFERENCES animal (type),
+    start_trial_date DATE DEFAULT NULL,
+    end_trial_date   DATE DEFAULT NULL,
+    CONSTRAINT user_primary_key PRIMARY KEY (id)
 );
 
--- changeset Diana:2
-
-CREATE TABLE Dog_adopters
-
+CREATE TABLE reporting
 (
-    id           serial       NOT NULL PRIMARY KEY,
-    user_chat_id BIGINT       NOT NULL REFERENCES Client (chat_id),
-    name         varchar(255) NOT NULL,
-    phone_number varchar(255) NOT NULL,
-    email        varchar(255) NOT NULL,
-    status       varchar(255) NOT NULL DEFAULT 'REQUESTED',
-    animal_type  varchar(255) NOT NULL DEFAULT 'DOG'
+    id          serial       NOT NULL,
+    id_user     BIGINT       NOT NULL REFERENCES client (id),
+    report_text TEXT         NOT NULL,
+    file_path   TEXT         NOT NULL,
+    file_size   BIGINT       NOT NULL,
+    preview     OID          NOT NULL,
+    sent_date   DATE,
+    status      varchar(255) NOT NULL DEFAULT 'DECLINED',
+    CONSTRAINT report_primary_key PRIMARY KEY (id)
 );
-
--- changeset Diana:3
-
-CREATE INDEX Dog_adopters_index on Dog_adopters (animal_type);
-
--- changeset Diana:4
-
-CREATE TABLE Cat_adopters
-
-(
-    id           serial       NOT NULL PRIMARY KEY,
-    user_chat_id BIGINT       NOT NULL REFERENCES Client (chat_id),
-    name         varchar(255) NOT NULL,
-    phone_number varchar(255) NOT NULL,
-    email        varchar(255) NOT NULL,
-    status       varchar(255) NOT NULL DEFAULT 'REQUESTED',
-    animal_type  varchar(255) NOT NULL DEFAULT 'CAT'
-);
-
--- changeset Diana:5
-
-CREATE INDEX Cat_adopters_index on Cat_adopters (animal_type);
-
-
-
-
-
-
 

@@ -1,10 +1,13 @@
 package pro.sky.java.course7.animalshelter.serviceimpl;
 
+import com.pengrad.telegrambot.model.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pro.sky.java.course7.animalshelter.model.Animal;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
+import pro.sky.java.course7.animalshelter.service.AnimalService;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
 import java.util.Collection;
@@ -12,7 +15,11 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static pro.sky.java.course7.animalshelter.model.User.UserStatus.USER;
+import static pro.sky.java.course7.animalshelter.constants.Constants.CONTACT_ME_TEXT;
+import static pro.sky.java.course7.animalshelter.constants.Constants.SUCCESS_SAVING_TEXT;
+import static pro.sky.java.course7.animalshelter.model.Animal.AnimalTypes.NO_ANIMAL;
+import static pro.sky.java.course7.animalshelter.model.User.UserStatus.ADOPTER_ON_TRIAL;
+import static pro.sky.java.course7.animalshelter.model.User.UserStatus.GUEST;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,10 +29,38 @@ public class UserServiceImpl implements UserService {
     private static final String REGEX_BOT_MESSAGE = "([\\W+]+)(\\s)(\\+7\\d{3}[-.]?\\d{3}[-.]?\\d{4})(\\s)([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+)";
 
     private final UserRepository repository;
+    private final AnimalService animalService;
 
-    public UserServiceImpl(UserRepository repository) {
+    public UserServiceImpl(UserRepository repository, AnimalService animalService) {
         this.repository = repository;
+        this.animalService = animalService;
     }
+
+    /**
+     * Save created user in repository
+     *
+     * @param user - created user
+     * @return savedUser - user's data which was saved in repository
+     */
+
+    @Override
+    public User save(User user) {
+        user.setStatus(GUEST);
+        user.setAnimal(animalService.getAnimalByName(NO_ANIMAL));
+        User savedUser = repository.save(user);
+        return savedUser;
+    }
+
+    @Override
+    public User edit(Long id, Long chatId, User user, User.UserStatus status, Animal.AnimalTypes type) {
+        user.setId(id);
+        user.setChatId(chatId);
+        user.setStatus(status);
+        user.setAnimal(animalService.getAnimalByName(type));
+        User editedUser = repository.save(user);
+        return editedUser;
+    }
+
 
     /**
      * Create a user in repository trough swagger or postman, without bot
@@ -35,36 +70,10 @@ public class UserServiceImpl implements UserService {
      */
 
     @Override
-    public User createUser(User user) {
+    public User createUserByVolunteer(User user, Animal.AnimalTypes type) {
+        user.setAnimal(animalService.getAnimalByName(type));
         logger.info("Was invoked method to create a user by volunteer");
         return repository.save(user);
-    }
-
-    /**
-     * Save created user in repository
-     *
-     * @param user   - created user
-     * @param chatId - user's chat id
-     * @return savedUser - user's data which was saved in repository
-     */
-
-    @Override
-    public User save(User user, long chatId) {
-        user.setChatId(chatId);
-        user.setStatus(USER);
-        User savedUser = repository.save(user);
-        return savedUser;
-    }
-
-    @Override
-    public User edit(User user, long id, long chatId, User.UserStatus status) {
-        user.setChatId(chatId);
-        user.setId(id);
-        user.setStatus(status);
-        User editedUser = repository.save(user);
-        logger.info("Current status3: " + status);
-        logger.info("Client's data has been edited successfully: " + editedUser);
-        return editedUser;
     }
 
     /**
@@ -75,7 +84,7 @@ public class UserServiceImpl implements UserService {
      */
 
     @Override
-    public Optional<User> parse(String userDataMessage) {
+    public Optional<User> parse(String userDataMessage, long chatId) {
         logger.info("Parsing method has been called");
         Pattern pattern = Pattern.compile(REGEX_BOT_MESSAGE);
         Matcher matcher = pattern.matcher(userDataMessage);
@@ -86,11 +95,37 @@ public class UserServiceImpl implements UserService {
                 String phoneNumber = matcher.group(3);
                 String email = matcher.group(5);
                 result = new User(name, phoneNumber, email);
+                result.setChatId(chatId);
             }
         } catch (Exception e) {
             logger.error("Failed to parse user's data: " + userDataMessage, e);
         }
         return Optional.ofNullable(result);
+    }
+
+    @Override
+    public String registrationUser(Message inputMessage) {
+        String outputMessage;
+        Optional<User> parseResult = parse(inputMessage.text(), inputMessage.chat().id());
+        if (parseResult.isPresent()) {
+            long chatId = inputMessage.chat().id();
+            if (getUserByChatId(chatId) == null) {
+                logger.info("Parse result is valid");
+                save(parseResult.get());
+                outputMessage = SUCCESS_SAVING_TEXT;
+            } else {
+                logger.info("Data is already exists, it will be restored");
+                User currentUser = getUserByChatId(chatId);
+                Animal.AnimalTypes type = currentUser.getAnimal().getType();
+                User editedUser = edit(currentUser.getId(), chatId, parseResult.get(), currentUser.getStatus(), type);
+                logger.info("Client with id {} has been edited successfully: ", editedUser.getId());
+                outputMessage = "Ваши данные успешно перезаписаны!";
+            }
+        } else {
+            logger.info("Invalid registration data");
+            outputMessage = CONTACT_ME_TEXT;
+        }
+        return outputMessage;
     }
 
     @Override
@@ -107,16 +142,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserById(long id) {
-        logger.info("Was invoked method to delete a client by Id");
+        logger.info("Was invoked method to delete a quest by Id");
         repository.deleteById(id);
     }
 
-
-    @Override
-    public void deleteUserByChatId(long chatId) {
-        logger.info("Was invoked method to delete a client by ChatId");
-        repository.deleteById(repository.findUserByChatId(chatId).getId());
-    }
 
     @Override
     public Collection<User> getAllUsers() {
@@ -124,4 +153,11 @@ public class UserServiceImpl implements UserService {
         return repository.findAll();
     }
 
+    @Override
+    public boolean adopterOnTrialExist (long chatId) {
+        return (repository.findUserByChatId(chatId) != null
+                && repository.findUserByChatId(chatId).getStatus().equals(ADOPTER_ON_TRIAL));
+    }
 }
+
+

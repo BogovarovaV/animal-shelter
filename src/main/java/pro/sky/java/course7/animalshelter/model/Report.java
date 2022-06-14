@@ -1,19 +1,18 @@
 package pro.sky.java.course7.animalshelter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Objects;
 
 
 @Entity
-@Table(name = "report")
+@Table(name = "reporting")
 public class Report {
 
     public enum ReportStatus {
-
-        REQUIRED_TEXT,
-
-        REQUIRED_PHOTO,
 
         SENT,
 
@@ -26,19 +25,30 @@ public class Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
+    @Column(name = "id")
     private long id;
 
-    private Long userChatId;
+    @Column(name = "id_user")
+    private Long clientId;
 
+    @Column(name = "report_text")
     private String reportText;
 
+    @Column(name = "file_path")
     private String filePath;
 
-    private LocalDateTime sentDate;
+    @Column(name = "file_size")
+    private long fileSize;
+
+    @Lob
+    @Column(name = "preview")
+    private byte[] preview;
+
+    @Column(name = "sent_date")
+    private LocalDate sentDate;
 
     @ManyToOne
-    @JoinColumn(name = "user_chat_id", insertable = false, updatable = false)
+    @JoinColumn(name = "id_user", referencedColumnName = "id", insertable = false, updatable = false)
     public User user;
 
     @Enumerated(EnumType.STRING)
@@ -46,12 +56,6 @@ public class Report {
 
 
     public Report() {
-    }
-
-    public Report(String reportText, String filePath, LocalDateTime sentDate) {
-        this.reportText = reportText;
-        this.filePath = filePath;
-        this.sentDate = sentDate;
     }
 
     public long getId() {
@@ -62,12 +66,12 @@ public class Report {
         this.id = id;
     }
 
-    public long getUserChatId() {
-        return userChatId;
+    public Long getClientId() {
+        return clientId;
     }
 
-    public void setUserChatId(long userChatId) {
-        this.userChatId = userChatId;
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
     }
 
     public String getReportText() {
@@ -86,11 +90,19 @@ public class Report {
         this.filePath = filePath;
     }
 
-    public LocalDateTime getSentDate() {
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public LocalDate getSentDate() {
         return sentDate;
     }
 
-    public void setSentDate(LocalDateTime sentDate) {
+    public void setSentDate(LocalDate sentDate) {
         this.sentDate = sentDate;
     }
 
@@ -102,17 +114,26 @@ public class Report {
         this.status = status;
     }
 
+    public byte[] getPreview() {
+        return preview;
+    }
+
+    public void setPreview(byte[] preview) {
+        this.preview = preview;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Report)) return false;
         Report report = (Report) o;
-        return getId() == report.getId() && getUserChatId() == report.getUserChatId() && getReportText().equals(report.getReportText()) && getFilePath().equals(report.getFilePath()) && getSentDate().equals(report.getSentDate()) && getStatus() == report.getStatus();
+        return id == report.id && fileSize == report.fileSize && Objects.equals(clientId, report.clientId) && Objects.equals(reportText, report.reportText) && Objects.equals(filePath, report.filePath) && Arrays.equals(preview, report.preview) && Objects.equals(sentDate, report.sentDate) && Objects.equals(user, report.user) && status == report.status;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getId(), getUserChatId(), getReportText(), getFilePath(), getSentDate(), getStatus());
+        int result = Objects.hash(id, clientId, reportText, filePath, fileSize, sentDate, user, status);
+        result = 31 * result + Arrays.hashCode(preview);
         return result;
     }
 
@@ -120,10 +141,13 @@ public class Report {
     public String toString() {
         return "Report{" +
                 "id=" + id +
-                ", userChatId=" + userChatId +
+                ", clientId=" + clientId +
                 ", reportText='" + reportText + '\'' +
                 ", filePath='" + filePath + '\'' +
+                ", fileSize=" + fileSize +
+                ", preview=" + Arrays.toString(preview) +
                 ", sentDate=" + sentDate +
+                ", user=" + user +
                 ", status=" + status +
                 '}';
     }
