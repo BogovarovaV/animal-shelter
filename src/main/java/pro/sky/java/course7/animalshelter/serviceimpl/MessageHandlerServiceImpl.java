@@ -18,9 +18,9 @@ import pro.sky.java.course7.animalshelter.model.Animal;
 import pro.sky.java.course7.animalshelter.service.AnimalService;
 import pro.sky.java.course7.animalshelter.service.MessageHandlerService;
 import pro.sky.java.course7.animalshelter.service.ReportService;
-import pro.sky.java.course7.animalshelter.service.ReportService;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -224,7 +224,12 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
             File file = getFile(inputMessage);
             String filePath = animalShelterBot.getFullFilePath(file);
             Integer fileSize = file.fileSize();
-            String outputMessage = reportService.handlePhoto(inputMessage, fileSize, filePath);
+            String outputMessage = null;
+            try {
+                outputMessage = reportService.handlePhoto(inputMessage, fileSize, filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             sendMessage(chatId, outputMessage);
             sendingReportStatus = 0;
 

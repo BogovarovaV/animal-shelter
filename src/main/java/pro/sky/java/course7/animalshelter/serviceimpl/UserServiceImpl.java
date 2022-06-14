@@ -147,12 +147,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-//    @Override
-//    public void deleteUserById(long id) {
-//        logger.info("Was invoked method to delete a quest by ChatId");
-//        repository.deleteById(id);
-//    }
-
     @Override
     public Collection<User> getAllUsers() {
         logger.info("Was invoked method to get a list of all users");

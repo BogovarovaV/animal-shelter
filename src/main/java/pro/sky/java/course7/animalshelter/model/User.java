@@ -24,8 +24,8 @@ public class User {
 
     @Column(name = "chat_id")
     private long chatId;
-
     @Column(name = "name")
+
     private String name;
 
     @Column(name = "phone_number")
@@ -122,14 +122,6 @@ public class User {
         this.email = email;
     }
 
-//    public List<Report> getReportList() {
-//        return reportList;
-//    }
-
- //   public void setReportList(List<Report> reportList) {
-//        this.reportList = reportList;
-//    }
-
     public LocalDate getStartTrialDate() {
         return startTrialDate;
     }
@@ -151,13 +143,13 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return id == user.id && chatId == user.chatId && Objects.equals(name, user.name) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(email, user.email) && status == user.status && Objects.equals(animal, user.animal)// && Objects.equals(reportList, user.reportList)
+        return id == user.id && chatId == user.chatId && Objects.equals(name, user.name) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(email, user.email) && status == user.status && Objects.equals(animal, user.animal)
          && Objects.equals(startTrialDate, user.startTrialDate) && Objects.equals(endTrialDate, user.endTrialDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, phoneNumber, email, status, animal,// reportList,
+        return Objects.hash(id, chatId, name, phoneNumber, email, status, animal,
                  startTrialDate, endTrialDate);
     }
 
@@ -171,7 +163,6 @@ public class User {
                 ", email='" + email + '\'' +
                 ", status=" + status +
                 ", animal=" + animal +
- //               ", reportList=" + reportList +
                 ", startTrialDate=" + startTrialDate +
                 ", endTrialDate=" + endTrialDate +
                 '}';

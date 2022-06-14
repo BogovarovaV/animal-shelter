@@ -11,17 +11,19 @@ import pro.sky.java.course7.animalshelter.repository.ReportRepository;
 import pro.sky.java.course7.animalshelter.service.ReportService;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Properties;
 
 
 @Service
 @Transactional
 public class ReportServiceImpl implements ReportService {
-
-    @Value("report_photo")
-    //("${report.photo.dir.path}$")
-    private String coverDir;
 
     private final Logger logger = LoggerFactory.getLogger(ReportServiceImpl.class);
     private final ReportRepository repository;
@@ -41,63 +43,88 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public String handlePhoto(Message message, Integer fileSize, String filePath)  {
+    public String handlePhoto(Message message, Integer fileSize, String filePath) {
 
-     //   User user = userService.getUserByChatId(message.chat().id());
-     //   logger.info("User with id {} sent a report ", user.getId());
-
-        report.setUser(userService.getUserByChatId(message.chat().id()));
-        logger.info("chat id {} : ", userService.getUserByChatId(message.chat().id()).getChatId());
-
-        logger.info("User id of the report {} ", report.getUser().getId());
-        logger.info("User chat id of the report {} ", report.getUser().getChatId());
-        logger.info("User name of the report {} ", report.getUser().getName());
-
+        report.setClientId(userService.getUserByChatId(message.chat().id()).getId());
         report.setFilePath(filePath);
         report.setFileSize(fileSize);
         report.setSentDate(LocalDate.now());
 
+        try {
+            report.setPreview(generatePhotoPreview(filePath));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         saveReport(report);
+
+        downloadFile(filePath, message);
+
         String outputMessage = "Спасибо! Ваш отчет отправлен волонтеру на проверку.";
         return outputMessage;
     }
 
-//    @Override
-//    public Path uploadPhotoFile(File reportFile, User user) throws IOException {
-//        Path filePath = Path.of(coverDir, user.getId() + "." + report.getSentDate() + "." + getExtension(reportFile.filePath()));
-//        report.setFilePath(reportFile.toString());
-//        logger.info("Uploading photo with path {} : ");
-//        Files.createDirectories(filePath.getParent());
-//        Files.deleteIfExists(filePath);
-//
-//        try (InputStream is = reportFile.getInputStream();
-//             OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-//             BufferedInputStream bis = new BufferedInputStream(is, 1024);
-//             BufferedOutputStream bos = new BufferedOutputStream(os, 1024)
-//        ) {
-//            bis.transferTo(bos);
-//
-//
-//        return filePath;
-//    }
+    @Override
+    public File downloadFile(String filePath, Message message) {
+        java.io.File file = null;
+        try {
+            Properties sysProps = System.getProperties();
+            URL url = new URL(filePath);
+            InputStream in = url.openStream();
+            String directoryPath = sysProps.getProperty("file.separator")
+                    + sysProps.getProperty("user.home") + sysProps.getProperty("file.separator") +
+                    "Documents" + sysProps.getProperty("file.separator") + "dev";
+            java.io.File directory = new java.io.File(directoryPath);
 
-//    @Override
-//    public byte[] generatePhotoPreview(Path filePath) throws IOException {
-//        try (InputStream is = Files.newInputStream(filePath);
-//             BufferedInputStream bis = new BufferedInputStream(is, 1024);
-//             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-//            BufferedImage image = ImageIO.read(bis);
-//
-//            int height = image.getHeight() / (image.getWidth() / 100);
-//            BufferedImage preview = new BufferedImage(100, height, image.getType());
-//            Graphics2D graphics = preview.createGraphics();
-//            graphics.drawImage(image, 0, 0, 100, height, null);
-//            graphics.dispose();
-//
-//            ImageIO.write(preview, getExtension(filePath.getFileName().toString()), baos);
-//            return baos.toByteArray();
+            String pathToFile = directoryPath + sysProps.getProperty("file.separator")
+                    + userService.getUserByChatId(message.chat().id()).getId() + "."
+                    + report.getSentDate().toString() + "."
+                    + filePath.substring(filePath.lastIndexOf("/") + 1);
 
 
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            file = new java.io.File(pathToFile);
+            file.createNewFile();
+
+            FileOutputStream os = new FileOutputStream(file);
+            int read;
+
+            byte[] bytes = new byte[10000];
+            while ((read = in.read(bytes)) != -1) {
+                os.write(bytes, 0, read);
+            }
+
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+    @Override
+    public byte[] generatePhotoPreview(String filePath) throws IOException {
+        URL url = new URL(filePath);
+        try (
+                InputStream is = url.openStream();
+                BufferedInputStream bis = new BufferedInputStream(is, 1024);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            BufferedImage image = ImageIO.read(bis);
+
+            int height = image.getHeight() / (image.getWidth() / 100);
+            BufferedImage preview = new BufferedImage(100, height, image.getType());
+            Graphics2D graphics = preview.createGraphics();
+            graphics.drawImage(image, 0, 0, 100, height, null);
+            graphics.dispose();
+
+            ImageIO.write(preview, getExtension(filePath), baos);
+            return baos.toByteArray();
+
+        }
+    }
 
     @Override
     public List<Report> findByUserId(long userId) {
@@ -131,7 +158,7 @@ public class ReportServiceImpl implements ReportService {
         return report;
     }
 
-//    private String getExtension(String fileName) {
-//        return fileName.substring(fileName.lastIndexOf(".") + 1);
-//    }
+    private String getExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
 }

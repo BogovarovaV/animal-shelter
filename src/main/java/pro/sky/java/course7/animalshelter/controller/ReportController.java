@@ -9,15 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pro.sky.java.course7.animalshelter.model.Report;
-import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.service.ReportService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.net.URL;
 
 @RestController
 @RequestMapping("/report")
@@ -29,38 +27,31 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-//    @GetMapping(value = "/{id}/report/preview")
-//    public ResponseEntity<byte[]> downloadReport(@PathVariable Long id) {
-//        if (reportService.findLastReportByUserId(id) == null) {
-//            return ResponseEntity.notFound().build();
-//        } else {
-//            Report report = reportService.findLastReportByUserId(id);
-//
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentLength(report.getPreview().length);
-//
-//            return ResponseEntity.status(HttpStatus.OK).headers(headers).body(report.getPreview());
-//        }
-//    }
-
-//    @GetMapping(value = "/{id}/report")
-//    public void downloadReport(@PathVariable Long id, HttpServletResponse response) throws IOException {
-//        Report report = reportService.findReportById(id);
-//        Path path = Path.of(report.getFilePath());
-//        try (InputStream is = Files.newInputStream(path);
-//             OutputStream os = response.getOutputStream();
-//        ) {
-//            is.transferTo(os);
-//        }
-//    }
-
-    @GetMapping("/{id}/report")
-    public ResponseEntity<Report> getReportById (@PathVariable Long id) {
+    @GetMapping(value = "/{id}/report/preview")
+    public ResponseEntity<byte[]> downloadReport(@PathVariable Long id) {
         Report report = reportService.findById(id);
         if (report == null) {
             return ResponseEntity.notFound().build();
+        } else {
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG);
+            headers.setContentLength(report.getPreview().length);
+
+            return ResponseEntity.status(HttpStatus.OK).headers(headers).body(report.getPreview());
         }
-        return ResponseEntity.ok(report);
+    }
+
+    @GetMapping(value = "/{id}/report")
+    public void downloadReport(@PathVariable Long id, HttpServletResponse response) throws IOException {
+        Report report = reportService.findById(id);
+        URL url = new URL(report.getFilePath());
+        try (InputStream is = url.openStream();
+             OutputStream os = response.getOutputStream()) {
+            response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+            response.setContentLength((int) report.getFileSize());
+            is.transferTo(os);
+        }
     }
 }
 

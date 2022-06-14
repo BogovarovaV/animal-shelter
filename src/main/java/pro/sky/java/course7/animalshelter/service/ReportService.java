@@ -1,11 +1,9 @@
 package pro.sky.java.course7.animalshelter.service;
 
-import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.Message;
-import org.springframework.web.multipart.MultipartFile;
 import pro.sky.java.course7.animalshelter.model.Report;
-import pro.sky.java.course7.animalshelter.model.User;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -27,5 +25,10 @@ public interface ReportService {
 
     Report saveTextReport(Message inputMessage);
 
-    String handlePhoto(Message message, Integer fileSize, String filePath);
+    String handlePhoto(Message message, Integer fileSize, String filePath) throws IOException;
+
+    File downloadFile(String filePath, Message message) throws IOException;
+
+    byte[] generatePhotoPreview(String filePath) throws IOException;
+
 }

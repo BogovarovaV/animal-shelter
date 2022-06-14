@@ -39,7 +39,7 @@ CREATE TABLE reporting
     report_text TEXT         NOT NULL,
     file_path   TEXT         NOT NULL,
     file_size   BIGINT       NOT NULL,
- --   preview     OID          NOT NULL,
+    preview     OID          NOT NULL,
     sent_date   DATE,
     status      varchar(255) NOT NULL DEFAULT 'DECLINED',
     CONSTRAINT report_primary_key PRIMARY KEY (id)
