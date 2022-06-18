@@ -8,19 +8,22 @@ import com.pengrad.telegrambot.model.request.Keyboard;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.GetFile;
+import com.pengrad.telegrambot.request.SendDocument;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pro.sky.java.course7.animalshelter.listener.AnimalShelterBotUpdatesListener;
 import pro.sky.java.course7.animalshelter.model.Animal;
+import pro.sky.java.course7.animalshelter.model.Report;
+import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.service.AnimalService;
 import pro.sky.java.course7.animalshelter.service.MessageHandlerService;
 import pro.sky.java.course7.animalshelter.service.ReportService;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -224,13 +227,31 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
             File file = getFile(inputMessage);
             String filePath = animalShelterBot.getFullFilePath(file);
             Integer fileSize = file.fileSize();
-            String outputMessage = null;
+
             try {
-                outputMessage = reportService.handlePhoto(inputMessage, fileSize, filePath);
-            } catch (IOException e) {
+                Report report = reportService.handlePhoto(inputMessage, fileSize, filePath);
+                sendMessage(chatId, "Спасибо! Ваш отчет отправлен волонтеру на проверку.");
+
+                java.io.File localFile = reportService.downloadFile(filePath, inputMessage);
+
+                User user = userService.getUserByChatId(chatId);
+
+                sendMessage( -467355830, "Вам поступил отчет на проверку: \n"
+                        + "\n\uD83D\uDFE2Пользователь: "
+                        + "\nId: " + user.getId()
+                        + "\nИмя: " + user.getName()
+                        + "\nИспытательный срок: " + user.getStartTrialDate() + " - " + user.getEndTrialDate()
+                        + "\n\n\uD83D\uDFE2Отчет: "
+                        + "\nId: " + report.getId()
+                        + "\nНомер: " + reportService.countUserReports(user.getId())
+                        + "\nСодержание: " + report.getReportText());
+
+                sendDocument( -467355830, localFile);
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            sendMessage(chatId, outputMessage);
+
             sendingReportStatus = 0;
 
         } else {
@@ -270,6 +291,36 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void sendDocument(long chatId, java.io.File file) {
+        SendDocument photo = new SendDocument(chatId, file);
+        try {
+            animalShelterBot.execute(photo);
+        } catch (Exception e) {
+            logger.info("Exception was thrown in sendMessage message method ");
+            e.printStackTrace();
+        }
+    }
+
+
+    @Scheduled(cron = "0 0 12 * * *")
+    public void sendRemindersToUser() {
+        SendMessage outputMessage = reportService.sendReminderToUser();
+        try {
+            animalShelterBot.execute(outputMessage);
+        } catch (Exception e) {
+            logger.info("Exception was thrown in send reminder message method ");
+            e.printStackTrace();
+        }
+    }
+
+//    @Scheduled(cron ="0 0 21 * * *")
+//    public void sendReportToVolunteers () {
+//        try {
+//            animalShelterBot.execute(reportService.)
+//        }
+//    }
 
     private static ReplyKeyboardMarkup chooseShelter() {
         logger.info("Choose shelter keyboard was called");
@@ -470,5 +521,9 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                 new String[]{BACK_TO_CAT_RECOMMENDATION_MENU_CMD}
         )
                 .resizeKeyboard(true);
+    }
+
+    private static void sendMessageToVolunteers() {
+
     }
 }

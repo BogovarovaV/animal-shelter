@@ -5,6 +5,7 @@ import pro.sky.java.course7.animalshelter.model.Animal;
 import pro.sky.java.course7.animalshelter.model.User;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -26,6 +27,8 @@ public interface UserService {
     void deleteUserById(long id);
 
     Collection<User> getAllUsers();
+
+    List<User> getAllAdopters(User.UserStatus status);
 
     boolean adopterOnTrialExist(long id);
 

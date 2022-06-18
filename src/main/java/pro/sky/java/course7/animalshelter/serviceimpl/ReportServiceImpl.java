@@ -1,12 +1,13 @@
 package pro.sky.java.course7.animalshelter.serviceimpl;
 
 import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.java.course7.animalshelter.model.Report;
+import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.repository.ReportRepository;
 import pro.sky.java.course7.animalshelter.service.ReportService;
 import pro.sky.java.course7.animalshelter.service.UserService;
@@ -43,7 +44,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public String handlePhoto(Message message, Integer fileSize, String filePath) {
+    public Report handlePhoto(Message message, Integer fileSize, String filePath) {
 
         report.setClientId(userService.getUserByChatId(message.chat().id()).getId());
         report.setFilePath(filePath);
@@ -59,10 +60,7 @@ public class ReportServiceImpl implements ReportService {
 
         saveReport(report);
 
-        downloadFile(filePath, message);
-
-        String outputMessage = "Спасибо! Ваш отчет отправлен волонтеру на проверку.";
-        return outputMessage;
+        return report;
     }
 
     @Override
@@ -127,6 +125,26 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public SendMessage sendReminderToUser() {
+        List<User> adoptersList = userService.getAllAdopters(User.UserStatus.ADOPTER_ON_TRIAL);
+        LocalDate yesterdayDate = LocalDate.now().minusDays(1);
+        LocalDate twoDaysAgoDate = LocalDate.now().minusDays(2);
+        SendMessage reminder = null;
+        if (!adoptersList.isEmpty()) {
+            for (User user : adoptersList) {
+                Report lastReport = findLastReportByUserId(user.getId());
+                logger.info("last report was sent {} " + lastReport.getSentDate());
+                if (lastReport != null && lastReport.getSentDate().isBefore(yesterdayDate)) {
+                    reminder = new SendMessage(user.getChatId(), "Вчера мы не получили от Вас отчет о питомце. " +
+                            "Пожалуйста, отправьте отчет, в противном случае волонтеры приюта будут обязаны самолично проверять условия содержания животного. ");
+                }
+            }
+        }
+        return reminder;
+    }
+
+
+    @Override
     public List<Report> findByUserId(long userId) {
         return repository.findByUserId(userId).orElse(null);
     }
@@ -156,6 +174,11 @@ public class ReportServiceImpl implements ReportService {
     public Report saveTextReport(Message inputMessage) {
         report.setReportText(inputMessage.text());
         return report;
+    }
+
+    @Override
+    public Integer countUserReports(long id) {
+       return repository.countReportsByClientId(id).orElse(null);
     }
 
     private String getExtension(String fileName) {

@@ -6,12 +6,14 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pro.sky.java.course7.animalshelter.service.MessageHandlerService;
 import pro.sky.java.course7.animalshelter.service.ReportService;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
 import javax.annotation.PostConstruct;
+import java.net.MalformedURLException;
 import java.util.List;
 
 
@@ -57,12 +59,13 @@ public class AnimalShelterBotUpdatesListener implements UpdatesListener {
             logger.info("Processing update: {}", update);
             Message message = update.message();
             // check if the update has a message and message has text
-            if (message != null ) {
-                messageHandler.handleMessage(message, extractChatId(message));
+            if (message != null) {
+                    messageHandler.handleMessage(message, extractChatId(message));
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
+
 
     private long extractChatId(Message message) {
         return message.chat().id();

@@ -11,6 +11,7 @@ import pro.sky.java.course7.animalshelter.service.AnimalService;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -146,11 +147,16 @@ public class UserServiceImpl implements UserService {
         repository.deleteById(id);
     }
 
-
     @Override
     public Collection<User> getAllUsers() {
         logger.info("Was invoked method to get a list of all users");
         return repository.findAll();
+    }
+
+    @Override
+    public List<User> getAllAdopters (User.UserStatus status) {
+        logger.info("Was invoked method to get a list of all users with definite status");
+        return repository.findAllAdopters(status);
     }
 
     @Override

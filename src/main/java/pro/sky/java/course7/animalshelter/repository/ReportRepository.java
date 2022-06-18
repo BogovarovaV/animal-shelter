@@ -13,7 +13,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     @Query("select r from Report r where r.user.id = ?1")
     Optional<List<Report>> findByUserId(long userId);
 
-    @Query(value = "select max (r) from Report r where r.user.id=:userId")
+    @Query(value = "select max (r) from Report r where r.user.id=?1")
     Optional<Report> findLastReportByUserId(long userId);
 
     @Query("select max (r.sentDate) from Report r where r.user.id = ?1")
@@ -21,6 +21,10 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     @Query("select r from Report r where r.id = ?1")
     Optional<Report> findById(long id);
+
+    @Query("select count(r) from Report r where r.clientId = ?1")
+    Optional<Integer> countReportsByClientId(long id);
+
 
 
 }
