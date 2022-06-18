@@ -1,4 +1,7 @@
 package pro.sky.java.course7.animalshelter.service;
+
+import com.pengrad.telegrambot.model.Message;
+import pro.sky.java.course7.animalshelter.model.Animal;
 import pro.sky.java.course7.animalshelter.model.User;
 
 import java.util.Collection;
@@ -6,13 +9,15 @@ import java.util.Optional;
 
 public interface UserService {
 
-    User createUser(User user);
+    User save(User user);
 
-    User save(User user, long chatId);
+    User edit(Long id, Long chatId, User user, User.UserStatus status, Animal.AnimalTypes type);
 
-    User edit(User user, long chatId, User.UserStatus status);
+    User createUserByVolunteer(User user, Animal.AnimalTypes type);
 
-    Optional<User> parse(String userDataMessage);
+    Optional<User> parse(String userDataMessage, long chatId);
+
+    String registrationUser(Message inputMessage);
 
     User getUserById(long id);
 
@@ -20,8 +25,8 @@ public interface UserService {
 
     void deleteUserById(long id);
 
-    void deleteUserByChatId(long chatId);
-
     Collection<User> getAllUsers();
+
+    boolean adopterOnTrialExist(long id);
 
 }
