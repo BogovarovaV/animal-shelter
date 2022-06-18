@@ -14,6 +14,7 @@ public interface Constants {
 
     String CALL_VOLUNTEER_CMD = "Позвать волонтера \uD83E\uDDD1";
     String CALL_VOLUNTEER_TEXT = "Зову на помощь волонтера";
+    Long VOLUNTEERS_CHAT_ID = -467355830L;
 
     String SUCCESS_SAVING_TEXT = "Ваши данные сохранены, мы свяжемся с вами в ближайшее время";
     String SAVING_FAILED_TEXT = "Мне не удалось распознать ваши данные\n";
