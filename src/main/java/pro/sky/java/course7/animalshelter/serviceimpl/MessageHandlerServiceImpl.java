@@ -1,7 +1,6 @@
 package pro.sky.java.course7.animalshelter.serviceimpl;
 
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.model.Contact;
 import com.pengrad.telegrambot.model.File;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.PhotoSize;
@@ -10,13 +9,13 @@ import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.request.SendContact;
 import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.java.course7.animalshelter.listener.AnimalShelterBotUpdatesListener;
 import pro.sky.java.course7.animalshelter.model.Animal;
+import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.service.AnimalService;
 import pro.sky.java.course7.animalshelter.service.MessageHandlerService;
 import pro.sky.java.course7.animalshelter.service.ReportService;
@@ -36,7 +35,6 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     private static final Logger logger = LoggerFactory.getLogger(AnimalShelterBotUpdatesListener.class);
 
     private final TelegramBot animalShelterBot;
-
     private final UserService userService;
     private final ReportService reportService;
     private final AnimalService animalService;
@@ -95,7 +93,6 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                         sendMessage(chatId, CALL_VOLUNTEER_TEXT);
                         sendMessage(VOLUNTEERS_CHAT_ID, "Пожалуйста, свяжитесь с пользователем: https://t.me/" + userContact);
                     }
-//                    sendMessageToVolunteers();
                     break;
                 case HOW_TO_TAKE_DOG_CMD:
                 case BACK_TO_DOG_RECOMMENDATION_MENU_CMD:
@@ -222,6 +219,8 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                     } else if (registrationRequired) {
                         logger.info("Registration data has been sent");
                         sendMessage(chatId, userService.registrationUser(inputMessage));
+                        sendMessage(VOLUNTEERS_CHAT_ID, "Пользователь " + userService.getUserByChatId(chatId).getName() +
+                                " (" + userService.getUserByChatId(chatId).getPhoneNumber() + ") оставил контакты для связи.");
                         registrationRequired = false;
                     } else if (sendingReportStatus == 1) {
                         sendMessage(chatId, PHOTO_REPORT_REQUIRED);
@@ -484,7 +483,4 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                 .resizeKeyboard(true);
     }
 
-    private static void sendMessageToVolunteers() {
-
-    }
 }
