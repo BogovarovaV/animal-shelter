@@ -4,7 +4,9 @@ import com.pengrad.telegrambot.model.Message;
 import pro.sky.java.course7.animalshelter.model.Animal;
 import pro.sky.java.course7.animalshelter.model.User;
 
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -28,5 +30,7 @@ public interface UserService {
     Collection<User> getAllUsers();
 
     boolean adopterOnTrialExist(long id);
+
+    List<User> getAdoptersWithEndOfTrial(User.UserStatus status, LocalDate endTrialDate);
 
 }

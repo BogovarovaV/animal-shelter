@@ -10,7 +10,9 @@ import pro.sky.java.course7.animalshelter.repository.UserRepository;
 import pro.sky.java.course7.animalshelter.service.AnimalService;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,8 +49,7 @@ public class UserServiceImpl implements UserService {
     public User save(User user) {
         user.setStatus(GUEST);
         user.setAnimal(animalService.getAnimalByName(NO_ANIMAL));
-        User savedUser = repository.save(user);
-        return savedUser;
+        return repository.save(user);
     }
 
     @Override
@@ -57,8 +58,7 @@ public class UserServiceImpl implements UserService {
         user.setChatId(chatId);
         user.setStatus(status);
         user.setAnimal(animalService.getAnimalByName(type));
-        User editedUser = repository.save(user);
-        return editedUser;
+        return repository.save(user);
     }
 
 
@@ -157,6 +157,11 @@ public class UserServiceImpl implements UserService {
     public boolean adopterOnTrialExist (long chatId) {
         return (repository.findUserByChatId(chatId) != null
                 && repository.findUserByChatId(chatId).getStatus().equals(ADOPTER_ON_TRIAL));
+    }
+
+    @Override
+    public List<User> getAdoptersWithEndOfTrial(User.UserStatus status, LocalDate endTrialDate) {
+        return repository.findAdoptersWithEndOfTrial(status, endTrialDate);
     }
 }
 
