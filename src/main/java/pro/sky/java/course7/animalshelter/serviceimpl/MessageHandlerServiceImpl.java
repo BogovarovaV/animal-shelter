@@ -37,12 +37,11 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     private static final Logger logger = LoggerFactory.getLogger(AnimalShelterBotUpdatesListener.class);
 
     private final TelegramBot animalShelterBot;
-
     private final UserService userService;
     private final ReportService reportService;
     private final AnimalService animalService;
     private static boolean registrationRequired = false;
-    private static int sendingReportStatus = 0; // 1 - user pushed button "send report", //2- user sent text, // 3 - user sent photo
+    private static int sendingReportStatus = 0; // 1 - user pushed button "send report", //2 - user sent text, // 3 - user sent photo
 
     public MessageHandlerServiceImpl(TelegramBot animalShelterBot, UserService userService, ReportService reportService, AnimalService animalService) {
         this.animalShelterBot = animalShelterBot;
@@ -89,7 +88,13 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                     registrationRequired = true;
                     break;
                 case CALL_VOLUNTEER_CMD:
-                    sendMessage(chatId, CALL_VOLUNTEER_TEXT);
+                    String userContact = inputMessage.chat().username();
+                    if (userContact == null) {
+                        sendMessage(chatId, "Пожалуйста, отправьте ваш номер телефона формате +79991234567 без пробелов.");
+                    } else {
+                        sendMessage(chatId, CALL_VOLUNTEER_TEXT);
+                        sendMessage(VOLUNTEERS_CHAT_ID, "Пожалуйста, свяжитесь с пользователем: https://t.me/" + userContact);
+                    }
                     break;
                 case HOW_TO_TAKE_DOG_CMD:
                 case BACK_TO_DOG_RECOMMENDATION_MENU_CMD:
@@ -210,9 +215,14 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                     break;
 
                 default:
-                    if (registrationRequired) {
+                    if (inputMessage.text().startsWith("+") && inputMessage.text().length() == 12) {
+                        sendMessage(VOLUNTEERS_CHAT_ID, "Пожалуйста, свяжитесь с пользователем: https://t.me/" + inputMessage.text());
+                        sendMessage(chatId, "Спасибо, волонтер свяжется с вами в ближайшее время");
+                    } else if (registrationRequired) {
                         logger.info("Registration data has been sent");
                         sendMessage(chatId, userService.registrationUser(inputMessage));
+                        sendMessage(VOLUNTEERS_CHAT_ID, "Пользователь " + userService.getUserByChatId(chatId).getName() +
+                                " (" + userService.getUserByChatId(chatId).getPhoneNumber() + ") оставил контакты для связи.");
                         registrationRequired = false;
                     } else if (sendingReportStatus == 1) {
                         sendMessage(chatId, PHOTO_REPORT_REQUIRED);
@@ -523,7 +533,4 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                 .resizeKeyboard(true);
     }
 
-    private static void sendMessageToVolunteers() {
-
-    }
 }
