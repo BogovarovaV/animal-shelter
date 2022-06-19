@@ -42,6 +42,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     private final AnimalService animalService;
     private static boolean registrationRequired = false;
     private static int sendingReportStatus = 0; // 1 - user pushed button "send report", //2 - user sent text, // 3 - user sent photo
+    private Report report;
 
     public MessageHandlerServiceImpl(TelegramBot animalShelterBot, UserService userService, ReportService reportService, AnimalService animalService) {
         this.animalShelterBot = animalShelterBot;
@@ -84,8 +85,12 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                     sendMessage(chatId, DOG_SAFETY_RECOMMENDATION_TEXT);
                     break;
                 case CONTACT_ME_CMD:
-                    sendMessage(chatId, CONTACT_ME_TEXT);
-                    registrationRequired = true;
+                    if(userService.getUserByChatId(chatId) !=null && !userService.getUserByChatId(chatId).getStatus().equals(User.UserStatus.GUEST)) {
+                        sendMessage(chatId, "Если вы хотите изменить свои контактные данные, пожалуйста, нажмите кнопку \"Позвать волонтера\". ");
+                    } else {
+                        sendMessage(chatId, CONTACT_ME_TEXT);
+                        registrationRequired = true;
+                    }
                     break;
                 case CALL_VOLUNTEER_CMD:
                     String userContact = inputMessage.chat().username();
@@ -226,7 +231,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                         registrationRequired = false;
                     } else if (sendingReportStatus == 1) {
                         sendMessage(chatId, PHOTO_REPORT_REQUIRED);
-                        reportService.saveTextReport(inputMessage);
+                        report = reportService.saveTextReport(inputMessage);
                         sendingReportStatus = 2;
                     } else {
                         sendMessage(chatId, INVALID_NOTIFICATION_OR_CMD);
@@ -239,6 +244,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
             Integer fileSize = file.fileSize();
 
             try {
+
                 Report report = reportService.handlePhoto(inputMessage, fileSize, filePath);
                 sendMessage(chatId, "Спасибо! Ваш отчет отправлен волонтеру на проверку.");
 
@@ -516,7 +522,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     }
 
 
-    @Scheduled(cron = "0 0 12 * * *")
+    @Scheduled(cron = "0 51 23 * * *")
     public void sendReminders() {
         sendReminderAboutLackOfReport();
         sendRemindersToVolunteerAboutEndOfTrial();
@@ -534,7 +540,6 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
         if (!adoptersList.isEmpty()) {
             for (User user : adoptersList) {
                 Report lastReport = reportService.findLastReportByUserId(user.getId());
-                logger.info("last report was sent {} ", lastReport.getSentDate());
                 if (lastReport != null && lastReport.getSentDate().isBefore(yesterdayDate)) {
                     reminder = new SendMessage(user.getChatId(), "Вчера мы не получили от Вас отчет о питомце. " +
                             "Пожалуйста, отправьте отчет, в противном случае волонтеры приюта будут обязаны самолично проверять условия содержания животного. ");
@@ -602,7 +607,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
         List<User> adopterListWithExtendedTrial = userService.findAdoptersByStatusAndExtendedTrial(User.UserStatus.ADOPTER_ON_TRIAL);
         if (!adopterListWithExtendedTrial.isEmpty()) {
             for (User user : adopterListWithExtendedTrial) {
-                SendMessage reminder = new SendMessage(user.getChatId(), TRIAL_EXTENDED);
+                SendMessage reminder = new SendMessage(user.getChatId(), TRIAL_EXTENDED + user.getExtendedEndTrialDate());
                 animalShelterBot.execute(reminder);
             }
         }

@@ -30,19 +30,20 @@ CREATE TABLE client
     start_trial_date DATE DEFAULT NULL,
     end_trial_date   DATE DEFAULT NULL,
     extended_end_trial_date DATE DEFAULT NULL,
-    CONSTRAINT user_primary_key PRIMARY KEY (id)
+    CONSTRAINT user_primary_key PRIMARY KEY (chat_id)
 );
 
 CREATE TABLE reporting
 (
-    id          serial       NOT NULL,
-    id_user     BIGINT       NOT NULL REFERENCES client (id),
-    report_text TEXT         NOT NULL,
-    file_path   TEXT         NOT NULL,
-    file_size   BIGINT       NOT NULL,
-    preview     OID          ,
-    sent_date   DATE,
-    status      varchar(255) NOT NULL DEFAULT 'DECLINED',
+    id           serial       NOT NULL,
+    --   id_user     BIGINT       NOT NULL REFERENCES client (id),
+    user_chat_id bigint       not null references client (chat_id),
+    report_text  TEXT         NOT NULL,
+    file_path    TEXT         NOT NULL,
+    file_size    BIGINT       NOT NULL,
+    preview      OID,
+    sent_date    DATE,
+    status       varchar(255) NOT NULL DEFAULT 'DECLINED',
     CONSTRAINT report_primary_key PRIMARY KEY (id)
 );
 

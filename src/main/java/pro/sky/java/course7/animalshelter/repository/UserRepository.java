@@ -29,7 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u inner join Report as r on u.status = ?1 and r.id = (select r2.id from Report as r2 where r2.sentDate = ?2)")
     List<User> findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate);
 
-    @Query("select u from User u inner join Report as r on u.status =?1 and u.extendedEndTrialDate is not null and current_date > u.endTrialDate")
+    @Query("select u from User u inner join Report as r on u.status =?1 and u.extendedEndTrialDate is not null and u.endTrialDate= ?2")
     List<User>findAdoptersByStatusAndExtendedTrial (User.UserStatus status);
 
 }

@@ -44,7 +44,8 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Report handlePhoto(Message message, Integer fileSize, String filePath) {
 
-        report.setClientId(userService.getUserByChatId(message.chat().id()).getId());
+      //  report.setClientId(userService.getUserByChatId(message.chat().id()));
+        report.setUserChatId(userService.getUserByChatId(message.chat().id()).getChatId());
         report.setFilePath(filePath);
         report.setFileSize(fileSize);
         report.setSentDate(LocalDate.now());
