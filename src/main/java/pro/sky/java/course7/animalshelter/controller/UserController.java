@@ -1,17 +1,13 @@
 package pro.sky.java.course7.animalshelter.controller;
 
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import pro.sky.java.course7.animalshelter.model.Animal;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")

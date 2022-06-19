@@ -50,8 +50,7 @@ public class UserServiceImpl implements UserService {
     public User save(User user) {
         user.setStatus(GUEST);
         user.setAnimal(animalService.getAnimalByName(NO_ANIMAL));
-        User savedUser = repository.save(user);
-        return savedUser;
+        return repository.save(user);
     }
 
     @Override
@@ -60,8 +59,7 @@ public class UserServiceImpl implements UserService {
         user.setChatId(chatId);
         user.setStatus(status);
         user.setAnimal(animalService.getAnimalByName(type));
-        User editedUser = repository.save(user);
-        return editedUser;
+        return repository.save(user);
     }
 
 
@@ -171,6 +169,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getAdoptersWithEndOfTrial(User.UserStatus status, LocalDate endTrialDate) {
         return repository.findAdoptersWithEndOfTrial(status, endTrialDate);
     }
+
 
     @Override
     public List<User> findAdoptersByReportStatusAndSentDate(Report.ReportStatus reportStatus, LocalDate sentDate) {
