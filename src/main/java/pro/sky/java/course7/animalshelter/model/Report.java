@@ -18,8 +18,6 @@ public class Report {
 
         ACCEPTED,
 
-        NEEDS_IMPROVEMENTS,
-
         DECLINED,
     }
 

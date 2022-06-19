@@ -3,6 +3,7 @@ package pro.sky.java.course7.animalshelter.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import pro.sky.java.course7.animalshelter.model.Report;
+import pro.sky.java.course7.animalshelter.model.User;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,7 +25,5 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     @Query("select count(r) from Report r where r.clientId = ?1")
     Optional<Integer> countReportsByClientId(long id);
-
-
 
 }

@@ -29,6 +29,7 @@ CREATE TABLE client
     animal_type      varchar(255) REFERENCES animal (type),
     start_trial_date DATE DEFAULT NULL,
     end_trial_date   DATE DEFAULT NULL,
+    extended_end_trial_date DATE DEFAULT NULL,
     CONSTRAINT user_primary_key PRIMARY KEY (id)
 );
 
@@ -45,10 +46,3 @@ CREATE TABLE reporting
     CONSTRAINT report_primary_key PRIMARY KEY (id)
 );
 
-CREATE TABLE volunteer
-(
-    id      serial NOT NULL,
-    chat_id BIGINT NOT NULL,
-    name    TEXT   NOT NULL,
-    CONSTRAINT volunteer_pk PRIMARY KEY (id)
-);
