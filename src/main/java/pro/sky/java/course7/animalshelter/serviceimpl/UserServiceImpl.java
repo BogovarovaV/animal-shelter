@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.java.course7.animalshelter.model.Animal;
+import pro.sky.java.course7.animalshelter.model.Report;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
 import pro.sky.java.course7.animalshelter.service.AnimalService;
@@ -146,7 +147,6 @@ public class UserServiceImpl implements UserService {
         repository.deleteById(id);
     }
 
-
     @Override
     public Collection<User> getAllUsers() {
         logger.info("Was invoked method to get a list of all users");
@@ -154,7 +154,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean adopterOnTrialExist (long chatId) {
+    public List<User> getAllAdopters(User.UserStatus status) {
+        logger.info("Was invoked method to get a list of all users with definite status");
+        return repository.findAllAdopters(status);
+    }
+
+    @Override
+    public boolean adopterOnTrialExist(long chatId) {
         return (repository.findUserByChatId(chatId) != null
                 && repository.findUserByChatId(chatId).getStatus().equals(ADOPTER_ON_TRIAL));
     }
@@ -163,6 +169,23 @@ public class UserServiceImpl implements UserService {
     public List<User> getAdoptersWithEndOfTrial(User.UserStatus status, LocalDate endTrialDate) {
         return repository.findAdoptersWithEndOfTrial(status, endTrialDate);
     }
+
+
+    @Override
+    public List<User> findAdoptersByReportStatusAndSentDate(Report.ReportStatus reportStatus, LocalDate sentDate) {
+        return repository.findAdoptersByReportStatusAndSentDate(reportStatus, sentDate);
+    }
+
+    @Override
+    public List<User>findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate) {
+        return repository.findAdoptersByStatusAndReportDate(status, sentDate);
+    }
+
+    @Override
+    public List<User> findAdoptersByStatusAndExtendedTrial (User.UserStatus status){
+     return repository.findAdoptersByStatusAndExtendedTrial(status);
+    }
+
 }
 
 

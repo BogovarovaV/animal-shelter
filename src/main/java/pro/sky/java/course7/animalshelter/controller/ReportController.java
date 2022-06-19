@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/report")
@@ -27,9 +29,10 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    @GetMapping(value = "/{id}/report/preview")
-    public ResponseEntity<byte[]> downloadReport(@PathVariable Long id) {
+    @GetMapping(value = "/{id}/preview")
+    public ResponseEntity downloadReport(@PathVariable Long id) {
         Report report = reportService.findById(id);
+
         if (report == null) {
             return ResponseEntity.notFound().build();
         } else {
@@ -38,11 +41,14 @@ public class ReportController {
             headers.setContentType(MediaType.IMAGE_JPEG);
             headers.setContentLength(report.getPreview().length);
 
-            return ResponseEntity.status(HttpStatus.OK).headers(headers).body(report.getPreview());
+            Map<byte[], String> fullReport = new HashMap<>();
+            fullReport.put(report.getPreview(), report.getReportText());
+
+            return ResponseEntity.status(HttpStatus.OK).headers(headers).body(fullReport);
         }
     }
 
-    @GetMapping(value = "/{id}/report")
+    @GetMapping(value = "/{id}/")
     public void downloadReport(@PathVariable Long id, HttpServletResponse response) throws IOException {
         Report report = reportService.findById(id);
         URL url = new URL(report.getFilePath());

@@ -3,7 +3,6 @@ package pro.sky.java.course7.animalshelter.serviceimpl;
 import com.pengrad.telegrambot.model.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pro.sky.java.course7.animalshelter.model.Report;
@@ -43,7 +42,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public String handlePhoto(Message message, Integer fileSize, String filePath) {
+    public Report handlePhoto(Message message, Integer fileSize, String filePath) {
 
         report.setClientId(userService.getUserByChatId(message.chat().id()).getId());
         report.setFilePath(filePath);
@@ -59,10 +58,7 @@ public class ReportServiceImpl implements ReportService {
 
         saveReport(report);
 
-        downloadFile(filePath, message);
-
-        String outputMessage = "Спасибо! Ваш отчет отправлен волонтеру на проверку.";
-        return outputMessage;
+        return report;
     }
 
     @Override
@@ -158,7 +154,13 @@ public class ReportServiceImpl implements ReportService {
         return report;
     }
 
+    @Override
+    public Integer countUserReports(long id) {
+       return repository.countReportsByClientId(id).orElse(null);
+    }
+
     private String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
+
 }

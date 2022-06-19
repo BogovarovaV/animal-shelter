@@ -2,6 +2,7 @@ package pro.sky.java.course7.animalshelter.service;
 
 import com.pengrad.telegrambot.model.Message;
 import pro.sky.java.course7.animalshelter.model.Animal;
+import pro.sky.java.course7.animalshelter.model.Report;
 import pro.sky.java.course7.animalshelter.model.User;
 
 import java.time.LocalDate;
@@ -29,8 +30,16 @@ public interface UserService {
 
     Collection<User> getAllUsers();
 
+    List<User> getAllAdopters(User.UserStatus status);
+
     boolean adopterOnTrialExist(long id);
 
     List<User> getAdoptersWithEndOfTrial(User.UserStatus status, LocalDate endTrialDate);
+
+    List<User> findAdoptersByReportStatusAndSentDate(Report.ReportStatus reportStatus, LocalDate sentDate);
+
+    List<User>findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate);
+
+    List<User> findAdoptersByStatusAndExtendedTrial(User.UserStatus status);
 
 }
