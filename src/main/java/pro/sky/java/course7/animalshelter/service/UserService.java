@@ -41,4 +41,5 @@ public interface UserService {
     List<User>findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate);
 
     List<User> findAdoptersByStatusAndExtendedTrial(User.UserStatus status);
+
 }
