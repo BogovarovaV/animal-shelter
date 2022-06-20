@@ -51,9 +51,6 @@ public class User {
     @Column (name = "end_trial_date")
     private LocalDate endTrialDate;
 
-    @Column (name = "extended_end_trial_date")
-    private LocalDate extendedEndTrialDate;
-
     public User() {
     }
 
@@ -142,25 +139,17 @@ public class User {
         this.endTrialDate = endTrialDate;
     }
 
-    public LocalDate getExtendedEndTrialDate() {
-        return extendedEndTrialDate;
-    }
-
-    public void setExtendedEndTrialDate(LocalDate extendedEndTrialDate) {
-        this.extendedEndTrialDate = extendedEndTrialDate;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return id == user.id && chatId == user.chatId && Objects.equals(name, user.name) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(email, user.email) && status == user.status && Objects.equals(animal, user.animal) && Objects.equals(startTrialDate, user.startTrialDate) && Objects.equals(endTrialDate, user.endTrialDate) && Objects.equals(extendedEndTrialDate, user.extendedEndTrialDate);
+        return id == user.id && chatId == user.chatId && Objects.equals(name, user.name) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(email, user.email) && status == user.status && Objects.equals(animal, user.animal) && Objects.equals(startTrialDate, user.startTrialDate) && Objects.equals(endTrialDate, user.endTrialDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, phoneNumber, email, status, animal, startTrialDate, endTrialDate, extendedEndTrialDate);
+        return Objects.hash(id, chatId, name, phoneNumber, email, status, animal, startTrialDate, endTrialDate);
     }
 
     @Override
@@ -175,7 +164,6 @@ public class User {
                 ", animal=" + animal +
                 ", startTrialDate=" + startTrialDate +
                 ", endTrialDate=" + endTrialDate +
-                ", extendedEndTrialDate=" + extendedEndTrialDate +
                 '}';
     }
 }
