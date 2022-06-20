@@ -27,7 +27,6 @@ public class ReportServiceImpl implements ReportService {
     private final Logger logger = LoggerFactory.getLogger(ReportServiceImpl.class);
     private final ReportRepository repository;
     private final UserService userService;
-    private Report report = new Report();
 
     public ReportServiceImpl(ReportRepository repository, UserService userService) {
         this.repository = repository;
@@ -42,10 +41,11 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Report handlePhoto(Message message, Integer fileSize, String filePath) {
+    public Report handlePhoto(Message message, Integer fileSize, String filePath, String reportText) {
 
-      //  report.setClientId(userService.getUserByChatId(message.chat().id()));
-        report.setUserChatId(userService.getUserByChatId(message.chat().id()).getChatId());
+        Report report = new Report();
+        report.setClientId(userService.getUserByChatId(message.chat().id()).getId());
+        report.setReportText(reportText);
         report.setFilePath(filePath);
         report.setFileSize(fileSize);
         report.setSentDate(LocalDate.now());
@@ -76,7 +76,7 @@ public class ReportServiceImpl implements ReportService {
 
             String pathToFile = directoryPath + sysProps.getProperty("file.separator")
                     + userService.getUserByChatId(message.chat().id()).getId() + "."
-                    + report.getSentDate().toString() + "."
+                    + LocalDate.now() + "."
                     + filePath.substring(filePath.lastIndexOf("/") + 1);
 
 
@@ -147,12 +147,6 @@ public class ReportServiceImpl implements ReportService {
     public boolean reportWasSentToday(LocalDate messageDate, long userId) {
         return (getDateOfLastReportByUserId(userId) != null &&
                 getDateOfLastReportByUserId(userId).equals(messageDate));
-    }
-
-    @Override
-    public Report saveTextReport(Message inputMessage) {
-        report.setReportText(inputMessage.text());
-        return report;
     }
 
     @Override
