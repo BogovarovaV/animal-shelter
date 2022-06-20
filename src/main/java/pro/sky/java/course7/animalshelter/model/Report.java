@@ -1,7 +1,5 @@
 package pro.sky.java.course7.animalshelter.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -23,7 +21,7 @@ public class Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     private long id;
 
     @Column(name = "id_user")
@@ -46,7 +44,7 @@ public class Report {
     private LocalDate sentDate;
 
     @ManyToOne
-    @JoinColumn(name = "id_user", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "id_user", insertable = false, updatable = false)
     public User user;
 
     @Enumerated(EnumType.STRING)
@@ -71,6 +69,7 @@ public class Report {
     public void setClientId(Long clientId) {
         this.clientId = clientId;
     }
+
 
     public String getReportText() {
         return reportText;

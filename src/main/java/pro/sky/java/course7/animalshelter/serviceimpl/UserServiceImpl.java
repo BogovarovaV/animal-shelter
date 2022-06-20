@@ -12,6 +12,7 @@ import pro.sky.java.course7.animalshelter.service.AnimalService;
 import pro.sky.java.course7.animalshelter.service.UserService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -177,15 +178,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User>findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate) {
+    public List<User> findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate) {
         return repository.findAdoptersByStatusAndReportDate(status, sentDate);
     }
 
-    @Override
-    public List<User> findAdoptersByStatusAndExtendedTrial (User.UserStatus status){
-     return repository.findAdoptersByStatusAndExtendedTrial(status);
-    }
+//    @Override
+//    public List<User> findAdoptersByStatusAndExtendedTrial (User.UserStatus status){
+//     return repository.findAdoptersByStatusAndExtendedTrial(status);
+//    }
 
+    @Override
+    public List<User> findAdoptersByStatusAndExtendedTrial(User.UserStatus status) {
+        List<User> adoptersList = repository.findAllAdopters(ADOPTER_ON_TRIAL);
+        List<User> adoptersWithExtendedTrial = new ArrayList<>();
+        if (adoptersList != null) {
+            for (User user : adoptersList) {
+                if (user.getEndTrialDate().plusDays(1).equals(LocalDate.now())) {
+                    adoptersWithExtendedTrial.add(user);
+                }
+            }
+        }
+        return adoptersWithExtendedTrial;
+    }
 }
 
 
