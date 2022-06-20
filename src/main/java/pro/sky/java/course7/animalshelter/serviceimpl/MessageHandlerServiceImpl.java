@@ -42,7 +42,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     private final AnimalService animalService;
     private static boolean registrationRequired = false;
     private static int sendingReportStatus = 0; // 1 - user pushed button "send report", //2 - user sent text, // 3 - user sent photo
-    private Report report;
+    private static String reportText;
 
     public MessageHandlerServiceImpl(TelegramBot animalShelterBot, UserService userService, ReportService reportService, AnimalService animalService) {
         this.animalShelterBot = animalShelterBot;
@@ -231,7 +231,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                         registrationRequired = false;
                     } else if (sendingReportStatus == 1) {
                         sendMessage(chatId, PHOTO_REPORT_REQUIRED);
-                        report = reportService.saveTextReport(inputMessage);
+                        reportText = inputMessage.text();
                         sendingReportStatus = 2;
                     } else {
                         sendMessage(chatId, INVALID_NOTIFICATION_OR_CMD);
@@ -245,14 +245,14 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
 
             try {
 
-                Report report = reportService.handlePhoto(inputMessage, fileSize, filePath);
+                Report report = reportService.handlePhoto(inputMessage, fileSize, filePath, reportText);
                 sendMessage(chatId, "Спасибо! Ваш отчет отправлен волонтеру на проверку.");
 
                 java.io.File localFile = reportService.downloadFile(filePath, inputMessage);
 
                 User user = userService.getUserByChatId(chatId);
 
-                sendMessage(-467355830, "Вам поступил отчет на проверку: \n"
+                sendMessage(VOLUNTEERS_CHAT_ID, "Вам поступил отчет на проверку: \n"
                         + "\n\uD83D\uDFE2Пользователь: "
                         + "\nId: " + user.getId()
                         + "\nИмя: " + user.getName()
@@ -262,7 +262,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                         + "\nНомер: " + reportService.countUserReports(user.getId())
                         + "\nСодержание: " + report.getReportText());
 
-                sendDocument(-467355830, localFile);
+                sendDocument(VOLUNTEERS_CHAT_ID, localFile);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -522,11 +522,12 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     }
 
 
-    @Scheduled(cron = "0 51 23 * * *")
+    @Scheduled(cron = "0 0 12 * * *")
     public void sendReminders() {
         sendReminderAboutLackOfReport();
         sendRemindersToVolunteerAboutEndOfTrial();
-        sendNotificationAboutCheckingReport();
+        sendNotificationAboutSuccessReport();
+        sendNotificationAboutDeclinedReport();
         sendNotificationAboutResultOfTrial();
     }
 
@@ -534,22 +535,26 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     @Override
     public void sendReminderAboutLackOfReport() {
         List<User> adoptersList = userService.getAllAdopters(User.UserStatus.ADOPTER_ON_TRIAL);
-        LocalDate yesterdayDate = LocalDate.now().minusDays(1);
-        LocalDate twoDaysAgoDate = LocalDate.now().minusDays(2);
-        SendMessage reminder;
         if (!adoptersList.isEmpty()) {
+            SendMessage reminderToUser = null;
+            SendMessage reminderToVolunteer = null;
             for (User user : adoptersList) {
                 Report lastReport = reportService.findLastReportByUserId(user.getId());
-                if (lastReport != null && lastReport.getSentDate().isBefore(yesterdayDate)) {
-                    reminder = new SendMessage(user.getChatId(), "Вчера мы не получили от Вас отчет о питомце. " +
+                if (lastReport != null && lastReport.getSentDate().isBefore(LocalDate.now())) {
+                    reminderToUser = new SendMessage(user.getChatId(), "Вчера мы не получили от Вас отчет о питомце. " +
                             "Пожалуйста, отправьте отчет, в противном случае волонтеры приюта будут обязаны самолично проверять условия содержания животного. ");
-                    animalShelterBot.execute(reminder);
-                    if (lastReport.getSentDate().isBefore(twoDaysAgoDate)) {
-                        reminder = new SendMessage(VOLUNTEERS_CHAT_ID, "Усыновитель " + user.getName() + " " + user.getPhoneNumber() + " не присылал отчет в течение двух дней. " +
+                    if (lastReport.getSentDate().isBefore(LocalDate.now().minusDays(1))) {
+                        reminderToVolunteer = new SendMessage(VOLUNTEERS_CHAT_ID, "Усыновитель " + user.getName() + " " + user.getPhoneNumber() + " не присылал отчет в течение двух дней. " +
                                 "\nНеобходимо с ним связаться как можно скорее.");
-                        animalShelterBot.execute(reminder);
                     }
+
                 }
+            }
+            if (reminderToUser != null) {
+                animalShelterBot.execute(reminderToUser);
+            }
+            if (reminderToUser != null) {
+                animalShelterBot.execute(reminderToVolunteer);
             }
         }
     }
@@ -558,31 +563,36 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     public void sendRemindersToVolunteerAboutEndOfTrial() {
         List<User> adoptersList = userService.getAdoptersWithEndOfTrial(User.UserStatus.ADOPTER_ON_TRIAL, LocalDate.now());
         if (!adoptersList.isEmpty()) {
-            SendMessage reminder;
+            SendMessage reminder = null;
             for (User user : adoptersList) {
                 reminder = new SendMessage(VOLUNTEERS_CHAT_ID, "Сегодня у усыновителя " + user.getName() + " " + user.getPhoneNumber() + " заканчивается испытательный срок. " +
                         "\nНеобходимо принять решение, прошел ли усыновитель испытательный срок или требуется продление срока.");
-                animalShelterBot.execute(reminder);
             }
+            animalShelterBot.execute(reminder);
         }
     }
 
     @Override
-    public void sendNotificationAboutCheckingReport() {
+    public void sendNotificationAboutSuccessReport() {
         List<User> adoptersListWithAcceptedReports = userService.findAdoptersByReportStatusAndSentDate(Report.ReportStatus.ACCEPTED, LocalDate.now().minusDays(1));
         if (!adoptersListWithAcceptedReports.isEmpty()) {
+            SendMessage reminder = null;
             for (User user : adoptersListWithAcceptedReports) {
-                SendMessage reminder = new SendMessage(user.getChatId(), "Поздравляем! Ваш вчерашний отчет был проверен и одобрен волонтером. Продолжайте в том же духе!");
-                animalShelterBot.execute(reminder);
+                reminder = new SendMessage(user.getChatId(), "Поздравляем! Ваш вчерашний отчет был проверен и одобрен волонтером. Продолжайте в том же духе!");
             }
+            animalShelterBot.execute(reminder);
         }
+    }
 
+    @Override
+    public void sendNotificationAboutDeclinedReport() {
         List<User> adoptersListWithDeclinedReports = userService.findAdoptersByReportStatusAndSentDate(Report.ReportStatus.DECLINED, LocalDate.now().minusDays(1));
         if (!adoptersListWithDeclinedReports.isEmpty()) {
+            SendMessage reminder = null;
             for (User user : adoptersListWithDeclinedReports) {
-                SendMessage reminder = new SendMessage(user.getChatId(), BAD_REPORT_WARNING);
-                animalShelterBot.execute(reminder);
+                reminder = new SendMessage(user.getChatId(), BAD_REPORT_WARNING);
             }
+            animalShelterBot.execute(reminder);
         }
     }
 
@@ -590,27 +600,32 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     public void sendNotificationAboutResultOfTrial() {
         List<User> adopterListWithSuccessTrial = userService.findAdoptersByStatusAndReportDate(User.UserStatus.OWNER, LocalDate.now().minusDays(1));
         if (!adopterListWithSuccessTrial.isEmpty()) {
+            SendMessage reminder;
             for (User user : adopterListWithSuccessTrial) {
-                SendMessage reminder = new SendMessage(user.getChatId(), TRIAL_PASSED);
+                reminder = new SendMessage(user.getChatId(), TRIAL_PASSED);
                 animalShelterBot.execute(reminder);
             }
         }
 
         List<User> adopterListWithTrialFailed = userService.findAdoptersByStatusAndReportDate(User.UserStatus.ADOPTER_TRIAL_FAILED, LocalDate.now().minusDays(1));
         if (!adopterListWithTrialFailed.isEmpty()) {
+            SendMessage reminder;
             for (User user : adopterListWithTrialFailed) {
-                SendMessage reminder = new SendMessage(user.getChatId(), TRIAL_NOT_PASSED);
+                reminder = new SendMessage(user.getChatId(), TRIAL_NOT_PASSED);
                 animalShelterBot.execute(reminder);
             }
         }
 
         List<User> adopterListWithExtendedTrial = userService.findAdoptersByStatusAndExtendedTrial(User.UserStatus.ADOPTER_ON_TRIAL);
         if (!adopterListWithExtendedTrial.isEmpty()) {
+            SendMessage reminder;
             for (User user : adopterListWithExtendedTrial) {
-                SendMessage reminder = new SendMessage(user.getChatId(), TRIAL_EXTENDED + user.getExtendedEndTrialDate());
+                reminder = new SendMessage(user.getChatId(), TRIAL_EXTENDED + user.getEndTrialDate());
                 animalShelterBot.execute(reminder);
             }
         }
     }
+
+
 }
 

@@ -1,7 +1,5 @@
 package pro.sky.java.course7.animalshelter.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -23,14 +21,11 @@ public class Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", updatable = false)
     private long id;
 
-    @Column(name = "user_chat_id")
-    private long userChatId;
-
-//    @Column(name = "id_user")
-//    private Long clientId;
+    @Column(name = "id_user")
+    private Long clientId;
 
     @Column(name = "report_text")
     private String reportText;
@@ -67,22 +62,14 @@ public class Report {
         this.id = id;
     }
 
-//    public Long getClientId() {
-//        return clientId;
-//    }
-//
-//    public void setClientId(Long clientId) {
-//        this.clientId = clientId;
-//    }
-
-
-    public long getUserChatId() {
-        return userChatId;
+    public Long getClientId() {
+        return clientId;
     }
 
-    public void setUserChatId(long userChatId) {
-        this.userChatId = userChatId;
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
     }
+
 
     public String getReportText() {
         return reportText;
@@ -137,14 +124,12 @@ public class Report {
         if (this == o) return true;
         if (!(o instanceof Report)) return false;
         Report report = (Report) o;
-        return id == report.id && fileSize == report.fileSize // && Objects.equals(clientId, report.clientId)
-         && Objects.equals(reportText, report.reportText) && Objects.equals(filePath, report.filePath) && Arrays.equals(preview, report.preview) && Objects.equals(sentDate, report.sentDate) && Objects.equals(user, report.user) && status == report.status;
+        return id == report.id && fileSize == report.fileSize && Objects.equals(clientId, report.clientId) && Objects.equals(reportText, report.reportText) && Objects.equals(filePath, report.filePath) && Arrays.equals(preview, report.preview) && Objects.equals(sentDate, report.sentDate) && Objects.equals(user, report.user) && status == report.status;
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, //clientId,
-                 reportText, filePath, fileSize, sentDate, user, status);
+        int result = Objects.hash(id, clientId, reportText, filePath, fileSize, sentDate, user, status);
         result = 31 * result + Arrays.hashCode(preview);
         return result;
     }
@@ -153,7 +138,7 @@ public class Report {
     public String toString() {
         return "Report{" +
                 "id=" + id +
-         //       ", clientId=" + clientId +
+                ", clientId=" + clientId +
                 ", reportText='" + reportText + '\'' +
                 ", filePath='" + filePath + '\'' +
                 ", fileSize=" + fileSize +

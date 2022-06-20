@@ -16,9 +16,10 @@ public interface MessageHandlerService {
 
     void sendRemindersToVolunteerAboutEndOfTrial();
 
-    void sendNotificationAboutCheckingReport();
+    void sendNotificationAboutSuccessReport();
+
+    void sendNotificationAboutDeclinedReport();
 
     void sendNotificationAboutResultOfTrial();
 
-    //   void sendNotificationAboutEndOfTrial();
 }
