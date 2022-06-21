@@ -22,7 +22,7 @@ public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
-    private long id;
+    private Long id;
 
     @Column(name = "id_user")
     private Long clientId;
@@ -34,7 +34,7 @@ public class Report {
     private String filePath;
 
     @Column(name = "file_size")
-    private long fileSize;
+    private Integer fileSize;
 
     @Lob
     @Column(name = "preview")
@@ -54,11 +54,11 @@ public class Report {
     public Report() {
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -87,11 +87,11 @@ public class Report {
         this.filePath = filePath;
     }
 
-    public long getFileSize() {
+    public Integer getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(long fileSize) {
+    public void setFileSize(Integer fileSize) {
         this.fileSize = fileSize;
     }
 
@@ -124,7 +124,7 @@ public class Report {
         if (this == o) return true;
         if (!(o instanceof Report)) return false;
         Report report = (Report) o;
-        return id == report.id && fileSize == report.fileSize && Objects.equals(clientId, report.clientId) && Objects.equals(reportText, report.reportText) && Objects.equals(filePath, report.filePath) && Arrays.equals(preview, report.preview) && Objects.equals(sentDate, report.sentDate) && Objects.equals(user, report.user) && status == report.status;
+        return id.equals(report.id) && fileSize.equals(report.fileSize) && Objects.equals(clientId, report.clientId) && Objects.equals(reportText, report.reportText) && Objects.equals(filePath, report.filePath) && Arrays.equals(preview, report.preview) && Objects.equals(sentDate, report.sentDate) && Objects.equals(user, report.user) && status == report.status;
     }
 
     @Override

@@ -25,7 +25,7 @@ public class Animal implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @JsonIgnore
-    private long id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
@@ -68,7 +68,7 @@ public class Animal implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Animal)) return false;
         Animal animal = (Animal) o;
-        return id == animal.id && type == animal.type && Objects.equals(users, animal.users);
+        return id.equals(animal.id) && type == animal.type && Objects.equals(users, animal.users);
     }
 
     @Override

@@ -19,21 +19,21 @@ public interface UserService {
 
     User createUserByVolunteer(User user, Animal.AnimalTypes type);
 
-    Optional<User> parse(String userDataMessage, long chatId);
+    Optional<User> parse(String userDataMessage, Long chatId);
 
     String registrationUser(Message inputMessage);
 
-    User getUserById(long id);
+    User getUserById(Long id);
 
-    User getUserByChatId(long chatId);
+    User getUserByChatId(Long chatId);
 
-    void deleteUserById(long id);
+    void deleteUserById(Long id);
 
     Collection<User> getAllUsers();
 
     List<User> getAllAdopters(User.UserStatus status);
 
-    boolean adopterOnTrialExist(long id);
+    boolean adopterOnTrialExist(Long id);
 
     List<User> getAdoptersWithEndOfTrial(User.UserStatus status, LocalDate endTrialDate);
 

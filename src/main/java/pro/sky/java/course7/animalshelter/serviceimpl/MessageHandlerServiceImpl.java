@@ -286,7 +286,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     }
 
     @Override
-    public void sendMessage(long chatId, String inputMessage, Keyboard keyboard) {
+    public void sendMessage(Long chatId, String inputMessage, Keyboard keyboard) {
         SendMessage outputMessage = new SendMessage(chatId, inputMessage)
                 .replyMarkup(keyboard);
         try {
@@ -298,7 +298,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     }
 
     @Override
-    public void sendMessage(long chatId, String inputMessage) {
+    public void sendMessage(Long chatId, String inputMessage) {
         SendMessage outputMessage = new SendMessage(chatId, inputMessage);
         try {
             animalShelterBot.execute(outputMessage);
@@ -309,7 +309,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     }
 
     @Override
-    public void sendDocument(long chatId, java.io.File file) {
+    public void sendDocument(Long chatId, java.io.File file) {
         SendDocument photo = new SendDocument(chatId, file);
         try {
             animalShelterBot.execute(photo);

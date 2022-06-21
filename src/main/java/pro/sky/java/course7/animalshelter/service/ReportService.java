@@ -10,17 +10,17 @@ import java.util.List;
 
 public interface ReportService {
 
-    List<Report> findByUserId(long userId);
+    List<Report> getReportsByUserId(Long userId);
 
-    Report findById(long id);
+    Report getById(Long id);
 
-    Report findLastReportByUserId(long userId);
+    Report findLastReportByUserId(Long userId);
 
-    LocalDate getDateOfLastReportByUserId(long userId);
+    LocalDate getDateOfLastReportByUserId(Long userId);
 
     Report saveReport(Report report);
 
-    boolean reportWasSentToday(LocalDate messageDate, long userId);
+    boolean reportWasSentToday(LocalDate messageDate, Long userId);
 
     Report handlePhoto(Message message, Integer fileSize, String filePath, String reportText) throws IOException;
 
@@ -28,5 +28,5 @@ public interface ReportService {
 
     byte[] generatePhotoPreview(String filePath) throws IOException;
 
-    Integer countUserReports(long id);
+    Integer countUserReports(Long id);
 }

@@ -21,10 +21,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "chat_id")
-    private long chatId;
+    private Long chatId;
 
     @Column(name = "name")
     private String name;
@@ -83,19 +83,19 @@ public class User {
         this.status = status;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getChatId() {
+    public Long getChatId() {
         return chatId;
     }
 
-    public void setChatId(long chatId) {
+    public void setChatId(Long chatId) {
         this.chatId = chatId;
     }
 
@@ -144,7 +144,7 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return id == user.id && chatId == user.chatId && Objects.equals(name, user.name) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(email, user.email) && status == user.status && Objects.equals(animal, user.animal) && Objects.equals(startTrialDate, user.startTrialDate) && Objects.equals(endTrialDate, user.endTrialDate);
+        return id.equals(user.id) && chatId.equals(user.chatId) && Objects.equals(name, user.name) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(email, user.email) && status == user.status && Objects.equals(animal, user.animal) && Objects.equals(startTrialDate, user.startTrialDate) && Objects.equals(endTrialDate, user.endTrialDate);
     }
 
     @Override

@@ -13,7 +13,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.java.course7.animalshelter.controller.UserController;
 import pro.sky.java.course7.animalshelter.model.User;
+import pro.sky.java.course7.animalshelter.repository.AnimalRepository;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
+import pro.sky.java.course7.animalshelter.serviceimpl.AnimalServiceImpl;
 import pro.sky.java.course7.animalshelter.serviceimpl.UserServiceImpl;
 
 import java.util.Arrays;
@@ -42,23 +44,31 @@ public class UserControllerTest {
     @MockBean
     private UserRepository userRepository;
 
+    @MockBean
+    private AnimalRepository animalRepository;
+
     @SpyBean
     private UserServiceImpl userService;
+
+    @SpyBean
+    private AnimalServiceImpl animalService;
 
     @InjectMocks
     private UserController userController;
 
     @BeforeEach
     public void setUp() throws Exception {
+        userObject2 = new JSONObject();
         userObject1 = new JSONObject();
+        userObject1.put("id", USER_ID_3);
+        userObject1.put("chat_id", USER_CHAT_ID_3);
         userObject1.put("name", USER_NAME_1);
         userObject1.put("phoneNumber", USER_PHONE_1);
         userObject1.put("email", USER_EMAIL_1);
 
         user1 = new User(USER_NAME_1, USER_PHONE_1, USER_EMAIL_1);
-        user1.setId(USER_ID_1);
-        user1.setChatId(USER_CHAT_ID_1);
-
+        user1.setId(USER_ID_3);
+        user1.setChatId(USER_CHAT_ID_3);
 
         user2 = new User(USER_NAME_2, USER_PHONE_2, USER_EMAIL_2);
         user2.setId(USER_ID_2);
@@ -71,14 +81,14 @@ public class UserControllerTest {
         when(userRepository.save(any(User.class))).thenReturn(user1);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/user")
+                        .post("/user?type=DOG")
                         .content(userObject1.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(USER_ID_1))
-                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_1))
+                .andExpect(jsonPath("$.id").value(USER_ID_3))
+                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_3))
                 .andExpect(jsonPath("$.name").value(USER_NAME_1))
                 .andExpect(jsonPath("$.phoneNumber").value(USER_PHONE_1))
                 .andExpect(jsonPath("$.email").value(USER_EMAIL_1));
@@ -86,23 +96,23 @@ public class UserControllerTest {
 
     @Test
     public void editUserTest() throws Exception {
-        userObject2 = new JSONObject();
+        userObject2.put("id", USER_ID_3);
+        userObject2.put("chat_id", USER_CHAT_ID_3);
         userObject2.put("name", USER_NAME_1);
         userObject2.put("phoneNumber", USER_PHONE_1);
         userObject2.put("email", USER_EMAIL_2);
 
         user1.setEmail(USER_EMAIL_2);
-
         when(userRepository.save(any(User.class))).thenReturn(user1);
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/user?chatId=123&status=USER")
+                        .put("/user?chatId=123&type=DOG&status=GUEST")
                         .content(userObject2.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(USER_ID_1))
-                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_1))
+                .andExpect(jsonPath("$.id").value(USER_ID_3))
+                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_3))
                 .andExpect(jsonPath("$.name").value(USER_NAME_1))
                 .andExpect(jsonPath("$.phoneNumber").value(USER_PHONE_1))
                 .andExpect(jsonPath("$.email").value(USER_EMAIL_2));
@@ -125,8 +135,8 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(USER_ID_1))
-                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_1))
+                .andExpect(jsonPath("$.id").value(USER_ID_3))
+                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_3))
                 .andExpect(jsonPath("$.name").value(USER_NAME_1))
                 .andExpect(jsonPath("$.phoneNumber").value(USER_PHONE_1))
                 .andExpect(jsonPath("$.email").value(USER_EMAIL_1));
@@ -143,10 +153,9 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id").value(USER_ID_1))
+                .andExpect(jsonPath("$[0].id").value(USER_ID_3))
                 .andExpect(jsonPath("$[1].id").value(USER_ID_2))
                 .andExpect(jsonPath("$[0].name").value(USER_NAME_1))
                 .andExpect(jsonPath("$[1].name").value(USER_NAME_2));
     }
-
 }
