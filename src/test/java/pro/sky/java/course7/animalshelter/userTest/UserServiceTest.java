@@ -71,11 +71,12 @@ public class UserServiceTest {
         assertEquals(user1, out.createUserByVolunteer(user1, TYPE));
     }
 
-    @Test
-    public void parseTest() {
-        assertTrue((out.parse(USER_MESSAGE_1, USER_CHAT_ID_1)).isPresent());
-        assertEquals(Optional.of(user1), out.parse(USER_MESSAGE_1, USER_CHAT_ID_1));
-    }
+//    @Test
+//    public void parseTest() {
+//        assertTrue((out.parse(USER_MESSAGE_1, USER_CHAT_ID_1)).isPresent());
+//        assertEquals(Optional.of(user1), out.parse(USER_MESSAGE_1, USER_CHAT_ID_1));
+//    }
+
 
     @Test
     public void registrationUserTest() {
@@ -86,12 +87,12 @@ public class UserServiceTest {
         Optional<User> parseResult = out.parse(USER_MESSAGE_1, USER_CHAT_ID_1);
         when(userRepositoryMock.save(parseResult.get())).thenReturn(user1);
         assertEquals(user1, out.edit(USER_ID_1, USER_CHAT_ID_1, parseResult.get(), USER_STATUS_1, TYPE));
-        }
+    }
 
     @Test
     public void getUserByIdTest() {
-        when(userRepositoryMock.findById(USER_ID_3)).thenReturn(Optional.ofNullable(user1));
-        assertEquals(user1, out.getUserById(USER_ID_3));
+        when(userRepositoryMock.findById(USER_ID_1)).thenReturn(Optional.ofNullable(user1));
+        assertEquals(user1, out.getUserById(USER_ID_1));
     }
 
     @Test
@@ -124,14 +125,14 @@ public class UserServiceTest {
 
     @Test
     public void getAdoptersWithEndOfTrialTest() {
-        List<User> users = List.of(user1,user2);
+        List<User> users = List.of(user1, user2);
         when(userRepositoryMock.findAdoptersWithEndOfTrial(USER_STATUS_3, TEST_TRIAL_DATE)).thenReturn(users);
         assertEquals(users, out.getAdoptersWithEndOfTrial(USER_STATUS_3, TEST_TRIAL_DATE));
     }
 
     @Test
     public void getAdoptersByReportStatusAndSentDateTest() {
-        List<User> users = List.of(user1,user2);
+        List<User> users = List.of(user1, user2);
         when(userRepositoryMock.findAdoptersByReportStatusAndSentDate(Report.ReportStatus.SENT, SENT_DATE)).thenReturn(users);
         assertEquals(users, out.getAdoptersByReportStatusAndSentDate(Report.ReportStatus.SENT, SENT_DATE));
 
@@ -139,7 +140,7 @@ public class UserServiceTest {
 
     @Test
     public void getAdoptersByStatusAndReportDateTest() {
-        List<User> users = List.of(user1,user2);
+        List<User> users = List.of(user1, user2);
         when(userRepositoryMock.findAdoptersByStatusAndReportDate(USER_STATUS_1, SENT_DATE)).thenReturn(users);
         assertEquals(users, out.getAdoptersByStatusAndReportDate(USER_STATUS_1, SENT_DATE));
     }
@@ -150,7 +151,7 @@ public class UserServiceTest {
         user2.setStartTrialDate(START_TRIAL_DATE);
         user1.setStatus(USER_STATUS_3);
         user2.setStatus(USER_STATUS_3);
-        List<User> users = List.of(user1,user2);
+        List<User> users = List.of(user1, user2);
         when(userRepositoryMock.findAllAdopters(USER_STATUS_3)).thenReturn(users);
         assertEquals(users, out.getAdoptersByStatusAndExtendedTrial(USER_STATUS_3));
     }

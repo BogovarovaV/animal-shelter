@@ -47,8 +47,8 @@ public class ReportServiceTest {
     public void setUp() {
         report1 = new Report();
         report2 = new Report();
-        report1.setClientId(USER_ID_3);
-        report2.setClientId(USER_ID_3);
+        report1.setClientId(USER_ID_1);
+        report2.setClientId(USER_ID_1);
         out = new ReportServiceImpl(reportRepositoryMock, userServiceMock);
     }
 
@@ -82,7 +82,7 @@ public class ReportServiceTest {
         List<Report> reports = List.of(report1,report2);
         when(reportRepositoryMock.findByUserId(any(Long.class))).
                 thenReturn(Optional.of(Optional.of(reports).orElse(null)));
-        assertEquals(reports, out.getReportsByUserId(USER_ID_3));
+        assertEquals(reports, out.getReportsByUserId(USER_ID_1));
     }
 
     @Test

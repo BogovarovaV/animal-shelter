@@ -60,15 +60,15 @@ public class UserControllerTest {
     public void setUp() throws Exception {
         userObject2 = new JSONObject();
         userObject1 = new JSONObject();
-        userObject1.put("id", USER_ID_3);
-        userObject1.put("chat_id", USER_CHAT_ID_3);
+        userObject1.put("id", USER_ID_1);
+        userObject1.put("chat_id", USER_CHAT_ID_1);
         userObject1.put("name", USER_NAME_1);
         userObject1.put("phoneNumber", USER_PHONE_1);
         userObject1.put("email", USER_EMAIL_1);
 
         user1 = new User(USER_NAME_1, USER_PHONE_1, USER_EMAIL_1);
-        user1.setId(USER_ID_3);
-        user1.setChatId(USER_CHAT_ID_3);
+        user1.setId(USER_ID_1);
+        user1.setChatId(USER_CHAT_ID_1);
 
         user2 = new User(USER_NAME_2, USER_PHONE_2, USER_EMAIL_2);
         user2.setId(USER_ID_2);
@@ -87,8 +87,8 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(USER_ID_3))
-                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_3))
+                .andExpect(jsonPath("$.id").value(USER_ID_1))
+                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_1))
                 .andExpect(jsonPath("$.name").value(USER_NAME_1))
                 .andExpect(jsonPath("$.phoneNumber").value(USER_PHONE_1))
                 .andExpect(jsonPath("$.email").value(USER_EMAIL_1));
@@ -96,8 +96,8 @@ public class UserControllerTest {
 
     @Test
     public void editUserTest() throws Exception {
-        userObject2.put("id", USER_ID_3);
-        userObject2.put("chat_id", USER_CHAT_ID_3);
+        userObject2.put("id", USER_ID_1);
+        userObject2.put("chat_id", USER_CHAT_ID_1);
         userObject2.put("name", USER_NAME_1);
         userObject2.put("phoneNumber", USER_PHONE_1);
         userObject2.put("email", USER_EMAIL_2);
@@ -111,8 +111,8 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(USER_ID_3))
-                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_3))
+                .andExpect(jsonPath("$.id").value(USER_ID_1))
+                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_1))
                 .andExpect(jsonPath("$.name").value(USER_NAME_1))
                 .andExpect(jsonPath("$.phoneNumber").value(USER_PHONE_1))
                 .andExpect(jsonPath("$.email").value(USER_EMAIL_2));
@@ -135,8 +135,8 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(USER_ID_3))
-                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_3))
+                .andExpect(jsonPath("$.id").value(USER_ID_1))
+                .andExpect(jsonPath("$.chatId").value(USER_CHAT_ID_1))
                 .andExpect(jsonPath("$.name").value(USER_NAME_1))
                 .andExpect(jsonPath("$.phoneNumber").value(USER_PHONE_1))
                 .andExpect(jsonPath("$.email").value(USER_EMAIL_1));
@@ -153,7 +153,7 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id").value(USER_ID_3))
+                .andExpect(jsonPath("$[0].id").value(USER_ID_1))
                 .andExpect(jsonPath("$[1].id").value(USER_ID_2))
                 .andExpect(jsonPath("$[0].name").value(USER_NAME_1))
                 .andExpect(jsonPath("$[1].name").value(USER_NAME_2));

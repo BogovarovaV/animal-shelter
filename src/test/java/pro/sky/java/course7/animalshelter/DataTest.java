@@ -10,16 +10,15 @@ import static pro.sky.java.course7.animalshelter.model.Animal.AnimalTypes.DOG;
 
 public interface DataTest {
 
+    String REGEX_BOT_MESSAGE = "([\\W+]+)(\\s)(\\+7\\d{3}[-.]?\\d{3}[-.]?\\d{4})(\\s)([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+)";
     Animal.AnimalTypes TYPE = DOG;
     Long ANIMAL_ID = 1L;
 
 
     LocalDate SENT_DATE = LocalDate.now().minusDays(1);
 
-    Long USER_ID_1 = null;
-    Long USER_CHAT_ID_1 = null;
-    Long USER_ID_3 = 1L;
-    Long USER_CHAT_ID_3 = 1L;
+    Long USER_ID_1 = 1L;
+    Long USER_CHAT_ID_1 = 1L;
     String USER_NAME_1 = "Джоуи Триббиани";
     String USER_PHONE_1 = "+79253572945";
     String USER_EMAIL_1 = "howyoudoing@gmail.com";
