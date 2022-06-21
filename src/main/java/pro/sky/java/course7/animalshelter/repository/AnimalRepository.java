@@ -8,4 +8,5 @@ public interface AnimalRepository extends JpaRepository<Animal, Animal.AnimalTyp
 
     @Query("SELECT a FROM Animal a WHERE a.type = ?1")
     Animal getAnimalBy(Animal.AnimalTypes type);
+
 }

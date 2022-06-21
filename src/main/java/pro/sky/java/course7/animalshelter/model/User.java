@@ -42,13 +42,13 @@ public class User {
     @JoinColumn(name = "animal_type", referencedColumnName = "type")
     private Animal animal;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Report> reportList;
 
     @Column(name = "start_trial_date")
     private LocalDate startTrialDate;
 
-    @Column (name = "end_trial_date")
+    @Column(name = "end_trial_date")
     private LocalDate endTrialDate;
 
     public User() {

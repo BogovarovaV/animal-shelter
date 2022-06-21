@@ -29,4 +29,5 @@ public interface ReportService {
     byte[] generatePhotoPreview(String filePath) throws IOException;
 
     Integer countUserReports(long id);
+
 }

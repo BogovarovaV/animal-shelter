@@ -6,4 +6,5 @@ public interface AnimalService {
 
 
     Animal getAnimalByName(Animal.AnimalTypes type);
+
 }

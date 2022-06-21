@@ -13,9 +13,7 @@ public class Report {
     public enum ReportStatus {
 
         SENT,
-
         ACCEPTED,
-
         DECLINED,
     }
 
