@@ -1,6 +1,7 @@
 package pro.sky.java.course7.animalshelter;
 
 import pro.sky.java.course7.animalshelter.model.Animal;
+import pro.sky.java.course7.animalshelter.model.Report;
 import pro.sky.java.course7.animalshelter.model.User;
 
 import java.time.LocalDate;
@@ -12,6 +13,8 @@ public interface DataTest {
 
     long ANIMAL_ID = 1;
     Animal.AnimalTypes TYPE = NO_ANIMAL;
+
+    LocalDate SENT_DATE = LocalDate.now().minusDays(1);
 
     long USER_ID_1 = 0;
     long USER_CHAT_ID_1 = 0;
@@ -33,6 +36,7 @@ public interface DataTest {
 
     User.UserStatus USER_STATUS_3 = User.UserStatus.ADOPTER_ON_TRIAL;
     LocalDate TEST_TRIAL_DATE = LocalDate.of(2022,12,1);
+    LocalDate START_TRIAL_DATE = LocalDate.now().minusDays(30);
 
 
     String REPORT_TEXT_1 = "Все ок";

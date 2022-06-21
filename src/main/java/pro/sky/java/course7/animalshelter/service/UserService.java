@@ -37,10 +37,10 @@ public interface UserService {
 
     List<User> getAdoptersWithEndOfTrial(User.UserStatus status, LocalDate endTrialDate);
 
-    List<User> findAdoptersByReportStatusAndSentDate(Report.ReportStatus reportStatus, LocalDate sentDate);
+    List<User> getAdoptersByReportStatusAndSentDate(Report.ReportStatus reportStatus, LocalDate sentDate);
 
-    List<User>findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate);
+    List<User>getAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate);
 
-    List<User> findAdoptersByStatusAndExtendedTrial(User.UserStatus status);
+    List<User> getAdoptersByStatusAndExtendedTrial(User.UserStatus status);
 
 }

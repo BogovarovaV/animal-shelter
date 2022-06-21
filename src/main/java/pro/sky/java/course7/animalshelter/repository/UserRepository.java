@@ -32,7 +32,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate);
 
 
-    @Query("select u from User u where u.status = ?1 and u.endTrialDate = ?2")
-    List<User> findAdoptersWithEndOfTrial (User.UserStatus status, LocalDate endTrialDate);
-
 }

@@ -8,18 +8,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.java.course7.animalshelter.model.Animal;
+import pro.sky.java.course7.animalshelter.model.Report;
 import pro.sky.java.course7.animalshelter.model.User;
 import pro.sky.java.course7.animalshelter.repository.UserRepository;
 import pro.sky.java.course7.animalshelter.serviceimpl.AnimalServiceImpl;
 import pro.sky.java.course7.animalshelter.serviceimpl.UserServiceImpl;
 
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static pro.sky.java.course7.animalshelter.DataTest.*;
+import static pro.sky.java.course7.animalshelter.model.User.UserStatus.ADOPTER_ON_TRIAL;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -123,13 +127,35 @@ public class UserServiceTest {
 
     @Test
     public void getAdoptersWithEndOfTrial() {
-        user1.setStatus(USER_STATUS_3);
-        user2.setStatus(USER_STATUS_3);
-        user1.setEndTrialDate(TEST_TRIAL_DATE);
-        user2.setEndTrialDate(TEST_TRIAL_DATE);
         List<User> users = List.of(user1,user2);
         when(userRepositoryMock.findAdoptersWithEndOfTrial(USER_STATUS_3, TEST_TRIAL_DATE)).thenReturn(users);
         assertEquals(users, out.getAdoptersWithEndOfTrial(USER_STATUS_3, TEST_TRIAL_DATE));
+    }
+
+    @Test
+    public void getAdoptersByReportStatusAndSentDate() {
+        List<User> users = List.of(user1,user2);
+        when(userRepositoryMock.findAdoptersByReportStatusAndSentDate(Report.ReportStatus.SENT, SENT_DATE)).thenReturn(users);
+        assertEquals(users, out.getAdoptersByReportStatusAndSentDate(Report.ReportStatus.SENT, SENT_DATE));
+
+    }
+
+    @Test
+    public void getAdoptersByStatusAndReportDate() {
+        List<User> users = List.of(user1,user2);
+        when(userRepositoryMock.findAdoptersByStatusAndReportDate(USER_STATUS_1, SENT_DATE)).thenReturn(users);
+        assertEquals(users, out.getAdoptersByStatusAndReportDate(USER_STATUS_1, SENT_DATE));
+    }
+
+    @Test
+    public void getAdoptersByStatusAndExtendedTrial() {
+        user1.setStartTrialDate(START_TRIAL_DATE);
+        user2.setStartTrialDate(START_TRIAL_DATE);
+        user1.setStatus(USER_STATUS_3);
+        user2.setStatus(USER_STATUS_3);
+        List<User> users = List.of(user1,user2);
+        when(userRepositoryMock.findAllAdopters(USER_STATUS_3)).thenReturn(users);
+        assertEquals(users, out.getAdoptersByStatusAndExtendedTrial(USER_STATUS_3));
     }
 
 }

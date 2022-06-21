@@ -39,16 +39,14 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     private final TelegramBot animalShelterBot;
     private final UserService userService;
     private final ReportService reportService;
-    private final AnimalService animalService;
     private static boolean registrationRequired = false;
     private static int sendingReportStatus = 0; // 1 - user pushed button "send report", //2 - user sent text, // 3 - user sent photo
     private static String reportText;
 
-    public MessageHandlerServiceImpl(TelegramBot animalShelterBot, UserService userService, ReportService reportService, AnimalService animalService) {
+    public MessageHandlerServiceImpl(TelegramBot animalShelterBot, UserService userService, ReportService reportService) {
         this.animalShelterBot = animalShelterBot;
         this.userService = userService;
         this.reportService = reportService;
-        this.animalService = animalService;
     }
 
     @Override
@@ -155,8 +153,10 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                             sendMessage(chatId, "Вы уже направляли сегодня отчет");
                         }
                     } else {
-                        sendMessage(chatId, "Вероятно, вас нет в моей базе данных усыновителей питомцев. \n" +
-                                "\nПожалуйста, нажмите в меню кнопку \"Позвать волонтера\" и мы обязательно с вами свяжемся");
+                        sendMessage(chatId, """
+                                Вероятно, вас нет в моей базе данных усыновителей питомцев.\s
+
+                                Пожалуйста, нажмите в меню кнопку "Позвать волонтера" и мы обязательно с вами свяжемся""");
                     }
                     break;
 
@@ -279,10 +279,10 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
         List<PhotoSize> photos = List.of(inputMessage.photo());
         PhotoSize photo = photos.stream()
                 .max(Comparator.comparing(PhotoSize::fileSize)).orElse(null);
+        assert photo != null;
         GetFile request = new GetFile(photo.fileId());
         GetFileResponse getFileResponse = animalShelterBot.execute(request);
-        File file = getFileResponse.file();
-        return file;
+        return getFileResponse.file();
     }
 
     @Override
@@ -323,7 +323,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
     private static ReplyKeyboardMarkup chooseShelter() {
         logger.info("Choose shelter keyboard was called");
         return new ReplyKeyboardMarkup(
-                new String[]{CAT_SHELTER_CMD, DOG_SHELTER_CMD})
+                CAT_SHELTER_CMD, DOG_SHELTER_CMD)
                 .resizeKeyboard(true)
                 .selective(true);
     }
@@ -574,7 +574,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
 
     @Override
     public void sendNotificationAboutSuccessReport() {
-        List<User> adoptersListWithAcceptedReports = userService.findAdoptersByReportStatusAndSentDate(Report.ReportStatus.ACCEPTED, LocalDate.now().minusDays(1));
+        List<User> adoptersListWithAcceptedReports = userService.getAdoptersByReportStatusAndSentDate(Report.ReportStatus.ACCEPTED, LocalDate.now().minusDays(1));
         if (!adoptersListWithAcceptedReports.isEmpty()) {
             SendMessage reminder = null;
             for (User user : adoptersListWithAcceptedReports) {
@@ -586,7 +586,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
 
     @Override
     public void sendNotificationAboutDeclinedReport() {
-        List<User> adoptersListWithDeclinedReports = userService.findAdoptersByReportStatusAndSentDate(Report.ReportStatus.DECLINED, LocalDate.now().minusDays(1));
+        List<User> adoptersListWithDeclinedReports = userService.getAdoptersByReportStatusAndSentDate(Report.ReportStatus.DECLINED, LocalDate.now().minusDays(1));
         if (!adoptersListWithDeclinedReports.isEmpty()) {
             SendMessage reminder = null;
             for (User user : adoptersListWithDeclinedReports) {
@@ -598,7 +598,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
 
     @Override
     public void sendNotificationAboutResultOfTrial() {
-        List<User> adopterListWithSuccessTrial = userService.findAdoptersByStatusAndReportDate(User.UserStatus.OWNER, LocalDate.now().minusDays(1));
+        List<User> adopterListWithSuccessTrial = userService.getAdoptersByStatusAndReportDate(User.UserStatus.OWNER, LocalDate.now().minusDays(1));
         if (!adopterListWithSuccessTrial.isEmpty()) {
             SendMessage reminder;
             for (User user : adopterListWithSuccessTrial) {
@@ -607,7 +607,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
             }
         }
 
-        List<User> adopterListWithTrialFailed = userService.findAdoptersByStatusAndReportDate(User.UserStatus.ADOPTER_TRIAL_FAILED, LocalDate.now().minusDays(1));
+        List<User> adopterListWithTrialFailed = userService.getAdoptersByStatusAndReportDate(User.UserStatus.ADOPTER_TRIAL_FAILED, LocalDate.now());
         if (!adopterListWithTrialFailed.isEmpty()) {
             SendMessage reminder;
             for (User user : adopterListWithTrialFailed) {
@@ -616,7 +616,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
             }
         }
 
-        List<User> adopterListWithExtendedTrial = userService.findAdoptersByStatusAndExtendedTrial(User.UserStatus.ADOPTER_ON_TRIAL);
+        List<User> adopterListWithExtendedTrial = userService.getAdoptersByStatusAndExtendedTrial(User.UserStatus.ADOPTER_ON_TRIAL);
         if (!adopterListWithExtendedTrial.isEmpty()) {
             SendMessage reminder;
             for (User user : adopterListWithExtendedTrial) {
