@@ -31,4 +31,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u inner join Report on u.status = ?1 and u.id in (select r.clientId from Report as r where r.sentDate = ?2)")
     List<User> findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate);
 
+
 }

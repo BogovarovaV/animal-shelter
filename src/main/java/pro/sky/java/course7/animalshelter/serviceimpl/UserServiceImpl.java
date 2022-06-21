@@ -170,17 +170,17 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<User> findAdoptersByReportStatusAndSentDate(Report.ReportStatus reportStatus, LocalDate sentDate) {
+    public List<User> getAdoptersByReportStatusAndSentDate(Report.ReportStatus reportStatus, LocalDate sentDate) {
         return repository.findAdoptersByReportStatusAndSentDate(reportStatus, sentDate);
     }
 
     @Override
-    public List<User> findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate) {
+    public List<User> getAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate) {
         return repository.findAdoptersByStatusAndReportDate(status, sentDate);
     }
 
     @Override
-    public List<User> findAdoptersByStatusAndExtendedTrial(User.UserStatus status) {
+    public List<User> getAdoptersByStatusAndExtendedTrial(User.UserStatus status) {
         List<User> adoptersList = repository.findAllAdopters(ADOPTER_ON_TRIAL);
         List<User> adoptersWithExtendedTrial = new ArrayList<>();
         if (adoptersList != null) {
@@ -188,7 +188,6 @@ public class UserServiceImpl implements UserService {
                 if (user.getStartTrialDate().plusDays(30).equals(LocalDate.now())) {
                     adoptersWithExtendedTrial.add(user);
                 }
-                logger.info("Количество юзеров в серивсе {}", adoptersWithExtendedTrial.toArray().length);
             }
         }
         return adoptersWithExtendedTrial;
