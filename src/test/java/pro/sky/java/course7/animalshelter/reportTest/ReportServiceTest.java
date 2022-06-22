@@ -53,14 +53,14 @@ public class ReportServiceTest {
     }
 
     @Test
-    public void saveReportTest() {
+    public void testSaveReport() {
         when(reportRepositoryMock.save(report1)).thenReturn(report1);
         assertEquals(report1, out.saveReport(report1));
         verify(reportRepositoryMock, times(1)).save(report1);
     }
 
 //    @Test
-//    public void handlePhotoTest() throws IOException {
+//    public void testHandlePhoto() throws IOException {
 //        report1.setClientId(USER_ID_1);
 //        report1.setReportText(REPORT_TEXT_1);
 //        report1.setFilePath(FILE_PATH_1);
@@ -70,15 +70,15 @@ public class ReportServiceTest {
 //    }
 
     @Test
-    public void downloadFileTest() {
+    public void testDownloadFile() {
     }
 
     @Test
-    public void generatePhotoPreviewTest() {
+    public void testGeneratePhotoPreview() {
     }
 
     @Test
-    public void getReportsByUserIdTest() {
+    public void testGetReportsByUserId() {
         List<Report> reports = List.of(report1,report2);
         when(reportRepositoryMock.findByUserId(any(Long.class))).
                 thenReturn(Optional.of(Optional.of(reports).orElse(null)));
@@ -86,7 +86,7 @@ public class ReportServiceTest {
     }
 
     @Test
-    public void getByIdTest() {
+    public void testGetById() {
         report1.setId(REPORT_ID);
         when(reportRepositoryMock.findById(any(Long.class))).
                 thenReturn(Optional.of(Optional.of(report1).orElse(null)));
@@ -95,19 +95,19 @@ public class ReportServiceTest {
     }
 
     @Test
-    public void findLastReportByUserIdTest() {
+    public void testFindLastReportByUserId() {
     }
 
     @Test
-    public void getDateOfLastReportByUserIdTest() {
+    public void testGetDateOfLastReportByUserId() {
     }
 
     @Test
-    public void reportWasSentTodayTest() {
+    public void testReportWasSentToday() {
     }
 
     @Test
-    public void countUserReportsTest() {
+    public void testCountUserReports() {
     }
 
 
