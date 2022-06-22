@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean adopterOnTrialExist(Long chatId) {
+    public boolean adopterOnTrialExists(Long chatId) {
         return (repository.findUserByChatId(chatId) != null
                 && repository.findUserByChatId(chatId).getStatus().equals(ADOPTER_ON_TRIAL));
     }
