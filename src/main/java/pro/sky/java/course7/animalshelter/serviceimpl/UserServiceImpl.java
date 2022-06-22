@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
      */
 
     @Override
-    public Optional<User> parse(String userDataMessage, long chatId) {
+    public Optional<User> parse(String userDataMessage, Long chatId) {
         logger.info("Parsing method has been called");
         Pattern pattern = Pattern.compile(REGEX_BOT_MESSAGE);
         Matcher matcher = pattern.matcher(userDataMessage);
@@ -128,19 +128,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long id) {
+    public User getUserById(Long id) {
         logger.info("Was invoked method to find a user by Id");
         return repository.findById(id).orElse(null);
     }
 
     @Override
-    public User getUserByChatId(long chatId) {
+    public User getUserByChatId(Long chatId) {
         logger.info("Was invoked method to find user by chatId");
         return repository.findUserByChatId(chatId);
     }
 
     @Override
-    public void deleteUserById(long id) {
+    public void deleteUserById(Long id) {
         logger.info("Was invoked method to delete a quest by Id");
         repository.deleteById(id);
     }
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean adopterOnTrialExist(long chatId) {
+    public boolean adopterOnTrialExist(Long chatId) {
         return (repository.findUserByChatId(chatId) != null
                 && repository.findUserByChatId(chatId).getStatus().equals(ADOPTER_ON_TRIAL));
     }
@@ -170,17 +170,17 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<User> findAdoptersByReportStatusAndSentDate(Report.ReportStatus reportStatus, LocalDate sentDate) {
+    public List<User> getAdoptersByReportStatusAndSentDate(Report.ReportStatus reportStatus, LocalDate sentDate) {
         return repository.findAdoptersByReportStatusAndSentDate(reportStatus, sentDate);
     }
 
     @Override
-    public List<User> findAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate) {
+    public List<User> getAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate) {
         return repository.findAdoptersByStatusAndReportDate(status, sentDate);
     }
 
     @Override
-    public List<User> findAdoptersByStatusAndExtendedTrial(User.UserStatus status) {
+    public List<User> getAdoptersByStatusAndExtendedTrial(User.UserStatus status) {
         List<User> adoptersList = repository.findAllAdopters(ADOPTER_ON_TRIAL);
         List<User> adoptersWithExtendedTrial = new ArrayList<>();
         if (adoptersList != null) {
@@ -188,7 +188,6 @@ public class UserServiceImpl implements UserService {
                 if (user.getStartTrialDate().plusDays(30).equals(LocalDate.now())) {
                     adoptersWithExtendedTrial.add(user);
                 }
-                logger.info("Количество юзеров в серивсе {}", adoptersWithExtendedTrial.toArray().length);
             }
         }
         return adoptersWithExtendedTrial;

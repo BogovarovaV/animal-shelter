@@ -22,7 +22,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user, @RequestParam Animal.AnimalTypes type) {
         if (user != null) {
-            User newUser = userService.createUserByVolunteer(user,type);
+            User newUser = userService.createUserByVolunteer(user, type);
             return ResponseEntity.ok(newUser);
         } else return ResponseEntity.noContent().build();
     }

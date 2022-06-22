@@ -1,7 +1,5 @@
 package pro.sky.java.course7.animalshelter.serviceimpl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.java.course7.animalshelter.model.Animal;
 import pro.sky.java.course7.animalshelter.repository.AnimalRepository;
@@ -23,5 +21,4 @@ public class AnimalServiceImpl implements AnimalService {
 
         return animalRepository.getAnimalBy(type);
     }
-
 }

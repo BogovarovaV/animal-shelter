@@ -42,23 +42,18 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Report handlePhoto(Message message, Integer fileSize, String filePath, String reportText) {
-
         Report report = new Report();
         report.setClientId(userService.getUserByChatId(message.chat().id()).getId());
         report.setReportText(reportText);
         report.setFilePath(filePath);
         report.setFileSize(fileSize);
         report.setSentDate(LocalDate.now());
-
         try {
             report.setPreview(generatePhotoPreview(filePath));
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         saveReport(report);
-
         return report;
     }
 
@@ -79,7 +74,6 @@ public class ReportServiceImpl implements ReportService {
                     + LocalDate.now() + "."
                     + filePath.substring(filePath.lastIndexOf("/") + 1);
 
-
             if (!directory.exists()) {
                 directory.mkdirs();
             }
@@ -88,12 +82,10 @@ public class ReportServiceImpl implements ReportService {
 
             FileOutputStream os = new FileOutputStream(file);
             int read;
-
             byte[] bytes = new byte[10000];
             while ((read = in.read(bytes)) != -1) {
                 os.write(bytes, 0, read);
             }
-
             os.flush();
             os.close();
         } catch (Exception e) {
@@ -119,38 +111,37 @@ public class ReportServiceImpl implements ReportService {
 
             ImageIO.write(preview, getExtension(filePath), baos);
             return baos.toByteArray();
-
         }
     }
 
     @Override
-    public List<Report> findByUserId(long userId) {
+    public List<Report> getReportsByUserId(Long userId) {
         return repository.findByUserId(userId).orElse(null);
     }
 
     @Override
-    public Report findById(long id) {
+    public Report getById(Long id) {
         return repository.findById(id).orElse(null);
     }
 
     @Override
-    public Report findLastReportByUserId(long userId) {
+    public Report findLastReportByUserId(Long userId) {
         return repository.findLastReportByUserId(userId).orElse(null);
     }
 
     @Override
-    public LocalDate getDateOfLastReportByUserId(long userId) {
+    public LocalDate getDateOfLastReportByUserId(Long userId) {
         return repository.getDateOfLastReportByUserId(userId).orElse(null);
     }
 
     @Override
-    public boolean reportWasSentToday(LocalDate messageDate, long userId) {
+    public boolean reportWasSentToday(LocalDate messageDate, Long userId) {
         return (getDateOfLastReportByUserId(userId) != null &&
                 getDateOfLastReportByUserId(userId).equals(messageDate));
     }
 
     @Override
-    public Integer countUserReports(long id) {
+    public Integer countUserReports(Long id) {
        return repository.countReportsByClientId(id).orElse(null);
     }
 

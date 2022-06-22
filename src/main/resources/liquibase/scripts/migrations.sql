@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 
--- changeset Diana:1
+-- changeset Diana and Anna:1
 
 CREATE TABLE animal
 (
@@ -20,15 +20,15 @@ values (3, 'NO_ANIMAL');
 
 CREATE TABLE client
 (
-    id               serial       NOT NULL,
-    chat_id          BIGINT       NOT NULL,
-    name             varchar(255) NOT NULL,
-    phone_number     varchar(255) NOT NULL,
-    email            varchar(255) NOT NULL,
-    status           varchar(255) NOT NULL,
-    animal_type      varchar(255) REFERENCES animal (type),
-    start_trial_date DATE DEFAULT NULL,
-    end_trial_date   DATE DEFAULT NULL,
+    id                      serial       NOT NULL,
+    chat_id                 BIGINT       NOT NULL,
+    name                    varchar(255) NOT NULL,
+    phone_number            varchar(255) NOT NULL,
+    email                   varchar(255) NOT NULL,
+    status                  varchar(255) NOT NULL,
+    animal_type             varchar(255) REFERENCES animal (type),
+    start_trial_date        DATE DEFAULT NULL,
+    end_trial_date          DATE DEFAULT NULL,
     CONSTRAINT user_primary_key PRIMARY KEY (id)
 );
 
@@ -44,4 +44,3 @@ CREATE TABLE reporting
     status      varchar(255) NOT NULL DEFAULT 'DECLINED',
     CONSTRAINT report_primary_key PRIMARY KEY (id)
 );
-
