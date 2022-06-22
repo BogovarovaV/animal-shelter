@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
      */
 
     @Override
-    public Optional<User> parse(String userDataMessage, long chatId) {
+    public Optional<User> parse(String userDataMessage, Long chatId) {
         logger.info("Parsing method has been called");
         Pattern pattern = Pattern.compile(REGEX_BOT_MESSAGE);
         Matcher matcher = pattern.matcher(userDataMessage);
@@ -128,19 +128,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long id) {
+    public User getUserById(Long id) {
         logger.info("Was invoked method to find a user by Id");
         return repository.findById(id).orElse(null);
     }
 
     @Override
-    public User getUserByChatId(long chatId) {
+    public User getUserByChatId(Long chatId) {
         logger.info("Was invoked method to find user by chatId");
         return repository.findUserByChatId(chatId);
     }
 
     @Override
-    public void deleteUserById(long id) {
+    public void deleteUserById(Long id) {
         logger.info("Was invoked method to delete a quest by Id");
         repository.deleteById(id);
     }
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean adopterOnTrialExist(long chatId) {
+    public boolean adopterOnTrialExists(Long chatId) {
         return (repository.findUserByChatId(chatId) != null
                 && repository.findUserByChatId(chatId).getStatus().equals(ADOPTER_ON_TRIAL));
     }

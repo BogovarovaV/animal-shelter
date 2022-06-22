@@ -58,6 +58,7 @@ public class UserControllerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+        userObject2 = new JSONObject();
         userObject1 = new JSONObject();
         userObject1.put("id", USER_ID_1);
         userObject1.put("chat_id", USER_CHAT_ID_1);
@@ -76,7 +77,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUserTest() throws Exception {
+    public void testShouldCreateUser() throws Exception {
         when(userRepository.save(any(User.class))).thenReturn(user1);
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -94,8 +95,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void editUserTest() throws Exception {
-        userObject2 = new JSONObject();
+    public void testShouldEditUser() throws Exception {
         userObject2.put("id", USER_ID_1);
         userObject2.put("chat_id", USER_CHAT_ID_1);
         userObject2.put("name", USER_NAME_1);
@@ -103,7 +103,6 @@ public class UserControllerTest {
         userObject2.put("email", USER_EMAIL_2);
 
         user1.setEmail(USER_EMAIL_2);
-
         when(userRepository.save(any(User.class))).thenReturn(user1);
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/user?chatId=123&type=DOG&status=GUEST")
@@ -120,7 +119,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void deleteUserTest() throws Exception {
+    public void testShouldDeleteUser() throws Exception {
         doNothing().when(userRepository).deleteById(any(Long.class));
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/user/123")
@@ -129,7 +128,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void getUserTest() throws Exception {
+    public void testShouldGetUser() throws Exception {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user1));
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/user/123")
@@ -144,7 +143,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void getAllUsers() throws Exception {
+    public void testShouldGetAllUsers() throws Exception {
         List<User> userList = Arrays.asList(user1, user2);
 
         when(userRepository.findAll()).thenReturn(userList);

@@ -115,34 +115,34 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<Report> findByUserId(long userId) {
+    public List<Report> getReportsByUserId(Long userId) {
         return repository.findByUserId(userId).orElse(null);
     }
 
     @Override
-    public Report findById(long id) {
+    public Report getById(Long id) {
         return repository.findById(id).orElse(null);
     }
 
     @Override
-    public Report findLastReportByUserId(long userId) {
+    public Report getLastReportByUserId(Long userId) {
         return repository.findLastReportByUserId(userId).orElse(null);
     }
 
     @Override
-    public LocalDate getDateOfLastReportByUserId(long userId) {
-        return repository.getDateOfLastReportByUserId(userId).orElse(null);
+    public LocalDate getDateOfLastReportByUserId(Long userId) {
+        return repository.findDateOfLastReportByUserId(userId).orElse(null);
     }
 
     @Override
-    public boolean reportWasSentToday(LocalDate messageDate, long userId) {
+    public boolean reportWasSentToday(LocalDate messageDate, Long userId) {
         return (getDateOfLastReportByUserId(userId) != null &&
                 getDateOfLastReportByUserId(userId).equals(messageDate));
     }
 
     @Override
-    public Integer countUserReports(long id) {
-        return repository.countReportsByClientId(id).orElse(null);
+    public Integer countUserReports(Long id) {
+       return repository.countReportsByClientId(id).orElse(null);
     }
 
     private String getExtension(String fileName) {

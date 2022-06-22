@@ -10,21 +10,21 @@ import java.util.Objects;
 @Table(name = "client")
 public class User {
 
+
     public enum UserStatus {
 
         GUEST,
         ADOPTER_ON_TRIAL,
         ADOPTER_TRIAL_FAILED,
         OWNER
-    }
 
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
-
+    private Long id;
     @Column(name = "chat_id")
-    private long chatId;
+    private Long chatId;
 
     @Column(name = "name")
     private String name;
@@ -83,19 +83,19 @@ public class User {
         this.status = status;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getChatId() {
+    public Long getChatId() {
         return chatId;
     }
 
-    public void setChatId(long chatId) {
+    public void setChatId(Long chatId) {
         this.chatId = chatId;
     }
 
@@ -144,12 +144,12 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return id == user.id && chatId == user.chatId && Objects.equals(name, user.name) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(email, user.email) && status == user.status && Objects.equals(animal, user.animal) && Objects.equals(startTrialDate, user.startTrialDate) && Objects.equals(endTrialDate, user.endTrialDate);
+        return getId().equals(user.getId()) && getChatId().equals(user.getChatId()) && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus() && getAnimal().equals(user.getAnimal()) && reportList.equals(user.reportList) && getStartTrialDate().equals(user.getStartTrialDate()) && getEndTrialDate().equals(user.getEndTrialDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chatId, name, phoneNumber, email, status, animal, startTrialDate, endTrialDate);
+        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus(), getAnimal(), reportList, getStartTrialDate(), getEndTrialDate());
     }
 
     @Override
