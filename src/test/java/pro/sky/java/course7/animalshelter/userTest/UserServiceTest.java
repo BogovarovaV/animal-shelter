@@ -86,7 +86,6 @@ public class UserServiceTest {
         assertEquals(expectedResult, parseResult);
     }
 
-
     @Test
     public void testRegistrationUser() {
         user1.setId(USER_ID_1);
