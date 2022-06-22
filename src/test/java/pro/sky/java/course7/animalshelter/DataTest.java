@@ -5,6 +5,7 @@ import pro.sky.java.course7.animalshelter.model.Animal;
 import pro.sky.java.course7.animalshelter.model.Report;
 import pro.sky.java.course7.animalshelter.model.User;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 import static pro.sky.java.course7.animalshelter.model.Animal.AnimalTypes.DOG;
@@ -45,6 +46,7 @@ public interface DataTest {
     String FILE_PATH_1 = "https://pocvetam.ru/wp-content/uploads/2019/08/kartinka-4-dekorativnyj-tabak-ochen-krasivo-cvetet.jpg";
     LocalDate SENT_DATE_1 = LocalDate.of(2022,1,1);
     Integer FILE_SIZE_1 = 1024;
+    byte[] PREVIEW_1 = "f6d73k9r".getBytes(StandardCharsets.UTF_8);
     Report.ReportStatus REPORT_STATUS_1 = Report.ReportStatus.SENT;
 
     String REPORT_TEXT_2 = "Все прекрасно";
