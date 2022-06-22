@@ -1,5 +1,7 @@
 package pro.sky.java.course7.animalshelter.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -36,6 +38,7 @@ public class Report {
 
     @Lob
     @Column(name = "preview")
+    @JsonIgnore
     private byte[] preview;
 
     @Column(name = "sent_date")
@@ -43,6 +46,7 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "id_user", insertable = false, updatable = false)
+    @JsonIgnore
     public User user;
 
     @Enumerated(EnumType.STRING)
@@ -50,6 +54,18 @@ public class Report {
 
 
     public Report() {
+    }
+
+
+    public Report(Long id, Long clientId, String reportText, String filePath, Integer fileSize, byte[] preview, LocalDate sentDate, ReportStatus status) {
+        this.id = id;
+        this.clientId = clientId;
+        this.reportText = reportText;
+        this.filePath = filePath;
+        this.fileSize = fileSize;
+        this.preview = preview;
+        this.sentDate = sentDate;
+        this.status = status;
     }
 
     public Long getId() {
