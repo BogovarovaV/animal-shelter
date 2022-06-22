@@ -14,7 +14,7 @@ public interface ReportService {
 
     Report getById(Long id);
 
-    Report findLastReportByUserId(Long userId);
+    Report getLastReportByUserId(Long userId);
 
     LocalDate getDateOfLastReportByUserId(Long userId);
 

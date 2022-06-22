@@ -1,5 +1,7 @@
 package pro.sky.java.course7.animalshelter.reportTest;
 
+import com.pengrad.telegrambot.model.Chat;
+import com.pengrad.telegrambot.model.Message;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,14 +18,16 @@ import pro.sky.java.course7.animalshelter.serviceimpl.ReportServiceImpl;
 //import pro.sky.java.course7.animalshelter.repository.ReportRepository;
 //import pro.sky.java.course7.animalshelter.serviceimpl.ReportServiceImpl;
 
-import java.io.File;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static pro.sky.java.course7.animalshelter.DataTest.*;
@@ -53,32 +57,37 @@ public class ReportServiceTest {
     }
 
     @Test
-    public void testSaveReport() {
+    public void testShouldSaveReport() {
         when(reportRepositoryMock.save(report1)).thenReturn(report1);
         assertEquals(report1, out.saveReport(report1));
         verify(reportRepositoryMock, times(1)).save(report1);
     }
 
+    @Test
+    public void testShouldThrowNullPointerExceptionAfterHandlePhoto()  {
+        assertThrows(NullPointerException.class,
+                () -> out.handlePhoto(REPORT_MESSAGE,FILE_SIZE_1,FILE_PATH_1, REPORT_TEXT_1));
+    }
+
 //    @Test
-//    public void testHandlePhoto() throws IOException {
-//        report1.setClientId(USER_ID_1);
-//        report1.setReportText(REPORT_TEXT_1);
-//        report1.setFilePath(FILE_PATH_1);
-//        report1.setFileSize(FILE_SIZE_1);
-//        report1.setSentDate(LocalDate.now());
-//        report1.setPreview(out.generatePhotoPreview(FILE_PATH_1));
+//    public void testShouldThrowExceptionWhileDownloadFile() {
+//        User user = new User();
+//        user.setId(USER_ID_1);
+//        user.setChatId(USER_CHAT_ID_1);
+//        when(userServiceMock.getUserByChatId(USER_CHAT_ID_1)).thenReturn(user);
+//        when(userServiceMock.getUserByChatId(REPORT_MESSAGE.chat().id()).getId()).thenReturn(USER_ID_1);
+//        assertThrows(NullPointerException.class,
+//                () -> out.downloadFile(FILE_PATH_2, REPORT_MESSAGE));
 //    }
 
     @Test
-    public void testDownloadFile() {
+    public void testShouldThrowIOExceptionGeneratePhotoPreview() {
+        assertThrows(IOException.class,
+                () -> out.generatePhotoPreview(FILE_PATH_2));
     }
 
     @Test
-    public void testGeneratePhotoPreview() {
-    }
-
-    @Test
-    public void testGetReportsByUserId() {
+    public void testShouldGetReportsByUserId() {
         List<Report> reports = List.of(report1,report2);
         when(reportRepositoryMock.findByUserId(any(Long.class))).
                 thenReturn(Optional.of(Optional.of(reports).orElse(null)));
@@ -86,7 +95,7 @@ public class ReportServiceTest {
     }
 
     @Test
-    public void testGetById() {
+    public void testShouldGetById() {
         report1.setId(REPORT_ID);
         when(reportRepositoryMock.findById(any(Long.class))).
                 thenReturn(Optional.of(Optional.of(report1).orElse(null)));
@@ -95,19 +104,28 @@ public class ReportServiceTest {
     }
 
     @Test
-    public void testFindLastReportByUserId() {
+    public void testShouldGetLastReportByUserId() {
+        when(reportRepositoryMock.findLastReportByUserId(USER_ID_1)).thenReturn(Optional.ofNullable(report1));
+        assertEquals(report1, out.getLastReportByUserId(USER_ID_1));
     }
 
     @Test
-    public void testGetDateOfLastReportByUserId() {
+    public void testShouldGetDateOfLastReportByUserId() {
+        when(reportRepositoryMock.findDateOfLastReportByUserId(USER_ID_1)).thenReturn(Optional.of(SENT_DATE_1));
+        assertEquals(SENT_DATE_1, out.getDateOfLastReportByUserId(USER_ID_1));
     }
 
     @Test
-    public void testReportWasSentToday() {
+    public void testShouldCheckIfReportWasSentToday() {
+        when(reportRepositoryMock.findDateOfLastReportByUserId(USER_ID_1)).thenReturn(Optional.of(SENT_DATE_1));
+        assertTrue(out.reportWasSentToday(SENT_DATE_1, USER_ID_1));
+
     }
 
     @Test
-    public void testCountUserReports() {
+    public void testShouldCountUserReports() {
+        when(reportRepositoryMock.countReportsByClientId(USER_ID_1)).thenReturn(Optional.of(1));
+        assertEquals(1, out.countUserReports(USER_ID_1));
     }
 
 

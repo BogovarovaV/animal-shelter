@@ -32,7 +32,7 @@ public interface UserService {
 
     List<User> getAllAdopters(User.UserStatus status);
 
-    boolean adopterOnTrialExist(Long id);
+    boolean adopterOnTrialExists(Long id);
 
     List<User> getAdoptersWithEndOfTrial(User.UserStatus status, LocalDate endTrialDate);
 

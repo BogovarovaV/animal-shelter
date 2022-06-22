@@ -87,15 +87,17 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                     break;
                 case SEND_REPORT_CMD:
                     sendingReportStatus = 1;
-                    if (userService.adopterOnTrialExist(chatId)) {
+                    if (userService.adopterOnTrialExists(chatId)) {
                         if (!reportService.reportWasSentToday(LocalDate.now(), userService.getUserByChatId(chatId).getId())) {
                             sendMessage(chatId, REPORT_FORM);
                         } else {
                             sendMessage(chatId, "Вы уже направляли сегодня отчет.");
                         }
                     } else {
-                        sendMessage(chatId, "Вероятно, вас нет в моей базе данных усыновителей питомцев. \n" +
-                                "\nПожалуйста, нажмите в меню кнопку \"Позвать волонтера\" и мы обязательно с вами свяжемся.");
+                        sendMessage(chatId, """
+                                Вероятно, вас нет в моей базе данных усыновителей питомцев.\s
+
+                                Пожалуйста, нажмите в меню кнопку "Позвать волонтера" и мы обязательно с вами свяжемся.""");
                     }
                     break;
                 case UNKNOWN_FILE:
@@ -536,7 +538,7 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
             SendMessage reminderToUser = null;
             SendMessage reminderToVolunteer = null;
             for (User user : adoptersList) {
-                Report lastReport = reportService.findLastReportByUserId(user.getId());
+                Report lastReport = reportService.getLastReportByUserId(user.getId());
                 if (lastReport != null && lastReport.getSentDate().isBefore(LocalDate.now())) {
                     reminderToUser = new SendMessage(user.getChatId(), "Вчера мы не получили от Вас отчет о питомце. " +
                             "Пожалуйста, отправьте отчет. В противном случае волонтеры приюта будут обязаны лично проверять условия содержания животного. ");

@@ -125,13 +125,13 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Report findLastReportByUserId(Long userId) {
+    public Report getLastReportByUserId(Long userId) {
         return repository.findLastReportByUserId(userId).orElse(null);
     }
 
     @Override
     public LocalDate getDateOfLastReportByUserId(Long userId) {
-        return repository.getDateOfLastReportByUserId(userId).orElse(null);
+        return repository.findDateOfLastReportByUserId(userId).orElse(null);
     }
 
     @Override

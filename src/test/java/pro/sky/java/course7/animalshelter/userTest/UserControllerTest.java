@@ -77,7 +77,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testCreateUser() throws Exception {
+    public void testShouldCreateUser() throws Exception {
         when(userRepository.save(any(User.class))).thenReturn(user1);
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -95,7 +95,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testEditUser() throws Exception {
+    public void testShouldEditUser() throws Exception {
         userObject2.put("id", USER_ID_1);
         userObject2.put("chat_id", USER_CHAT_ID_1);
         userObject2.put("name", USER_NAME_1);
@@ -119,7 +119,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDeleteUser() throws Exception {
+    public void testShouldDeleteUser() throws Exception {
         doNothing().when(userRepository).deleteById(any(Long.class));
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/user/123")
@@ -128,7 +128,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetUser() throws Exception {
+    public void testShouldGetUser() throws Exception {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user1));
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/user/123")
@@ -143,7 +143,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetAllUsers() throws Exception {
+    public void testShouldGetAllUsers() throws Exception {
         List<User> userList = Arrays.asList(user1, user2);
 
         when(userRepository.findAll()).thenReturn(userList);

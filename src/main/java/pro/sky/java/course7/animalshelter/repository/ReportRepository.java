@@ -17,7 +17,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Optional<Report> findLastReportByUserId(Long userId);
 
     @Query("select max (r.sentDate) from Report r where r.user.id = ?1")
-    Optional<LocalDate> getDateOfLastReportByUserId(Long userId);
+    Optional<LocalDate> findDateOfLastReportByUserId(Long userId);
 
     @Override
     @Query("select r from Report r where r.id = ?1")
