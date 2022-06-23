@@ -41,18 +41,18 @@ public interface DataTest {
     LocalDate START_TRIAL_DATE = LocalDate.now().minusDays(30);
 
 
-    Long REPORT_ID = 1L;
+    Long REPORT_ID_1 = 1L;
     String REPORT_TEXT_1 = "Все ок";
     String FILE_PATH_1 = "https://pocvetam.ru/wp-content/uploads/2019/08/kartinka-4-dekorativnyj-tabak-ochen-krasivo-cvetet.jpg";
     LocalDate SENT_DATE_1 = LocalDate.of(2022,1,1);
     Integer FILE_SIZE_1 = 1024;
     byte[] PREVIEW_1 = "f6d73k9r".getBytes(StandardCharsets.UTF_8);
     Report.ReportStatus REPORT_STATUS_1 = Report.ReportStatus.SENT;
-
+    Long REPORT_ID_2 = 2L;
     String REPORT_TEXT_2 = "Все прекрасно";
     String FILE_PATH_2 = "https://api.telegram.org/photo2.jpg";
     LocalDate SENT_DATE_2 = LocalDate.of(2020,2,4);
-
+    Report.ReportStatus REPORT_STATUS_2 = Report.ReportStatus.ACCEPTED;
     String FILE_PATH_3 = null;
 
 }

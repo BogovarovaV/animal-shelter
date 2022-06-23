@@ -51,6 +51,8 @@ public class ReportServiceTest {
     public void setUp() {
         report1 = new Report();
         report2 = new Report();
+        report1.setId(REPORT_ID_1);
+        report2.setId(REPORT_ID_2);
         report1.setClientId(USER_ID_1);
         report2.setClientId(USER_ID_1);
         out = new ReportServiceImpl(reportRepositoryMock, userServiceMock);
@@ -86,10 +88,10 @@ public class ReportServiceTest {
 
     @Test
     public void testShouldGetById() {
-        report1.setId(REPORT_ID);
+
         when(reportRepositoryMock.findById(any(Long.class))).
                 thenReturn(Optional.of(Optional.of(report1).orElse(null)));
-        assertEquals(report1, out.getById(REPORT_ID));
+        assertEquals(report1, out.getById(REPORT_ID_1));
 
     }
 
@@ -118,5 +120,10 @@ public class ReportServiceTest {
         assertEquals(1, out.countUserReports(USER_ID_1));
     }
 
-
+    @Test
+    public void testShouldEditReportStatus() {
+        when(reportRepositoryMock.save(report2)).thenReturn(report2);
+        report2.setStatus(Report.ReportStatus.ACCEPTED);
+        assertEquals(report2, out.editReportByVolunteer(report2, REPORT_STATUS_2));
+    }
 }
