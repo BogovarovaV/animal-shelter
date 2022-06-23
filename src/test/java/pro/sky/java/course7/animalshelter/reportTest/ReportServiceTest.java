@@ -69,16 +69,6 @@ public class ReportServiceTest {
                 () -> out.handlePhoto(REPORT_MESSAGE,FILE_SIZE_1,FILE_PATH_1, REPORT_TEXT_1));
     }
 
-//    @Test
-//    public void testShouldThrowExceptionWhileDownloadFile() {
-//        User user = new User();
-//        user.setId(USER_ID_1);
-//        user.setChatId(USER_CHAT_ID_1);
-//        when(userServiceMock.getUserByChatId(USER_CHAT_ID_1)).thenReturn(user);
-//        when(userServiceMock.getUserByChatId(REPORT_MESSAGE.chat().id()).getId()).thenReturn(USER_ID_1);
-//        assertThrows(NullPointerException.class,
-//                () -> out.downloadFile(FILE_PATH_2, REPORT_MESSAGE));
-//    }
 
     @Test
     public void testShouldThrowIOExceptionGeneratePhotoPreview() {

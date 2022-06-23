@@ -1,5 +1,8 @@
 package pro.sky.java.course7.animalshelter.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,8 +31,19 @@ public class ReportController {
         this.reportService = reportService;
     }
 
+    @Operation(
+            tags = "Отчеты усыновителей",
+            summary = "Получение превью фотографии из отчета",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Превью фотографии отчета"
+                    ),
+            }
+    )
     @GetMapping(value = "/{id}/preview")
-    public ResponseEntity getReportPreview(@PathVariable Long id) {
+    public ResponseEntity getReportPreview(@Parameter(description = "ID отчета")
+                                           @PathVariable Long id) {
         Report report = reportService.getById(id);
         if (report == null) {
             return ResponseEntity.notFound().build();
@@ -41,8 +55,19 @@ public class ReportController {
         }
     }
 
+    @Operation(
+            tags = "Отчеты усыновителей",
+            summary = "Получение фотографии из отчета",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Фотография отчета"
+                    ),
+            }
+    )
     @GetMapping(value = "/{id}/image")
-    public void getReportImage(@PathVariable Long id, HttpServletResponse response) throws IOException {
+    public void getReportImage(@Parameter(description = "ID отчета")
+                               @PathVariable Long id, HttpServletResponse response) throws IOException {
         Report report = reportService.getById(id);
         URL url = new URL(report.getFilePath());
         try (InputStream is = url.openStream();
@@ -53,8 +78,19 @@ public class ReportController {
         }
     }
 
+    @Operation(
+            tags = "Отчеты усыновителей",
+            summary = "Получение текста отчета",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Текст отчета"
+                    ),
+            }
+    )
     @GetMapping("/{id}")
-    public ResponseEntity<Report> getReportText(@PathVariable Long id) {
+    public ResponseEntity<Report> getReportText(@Parameter(description = "ID отчета")
+                                                @PathVariable Long id) {
         Report report = reportService.getById(id);
         if (report == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -62,8 +98,19 @@ public class ReportController {
         return ResponseEntity.ok(report);
     }
 
+    @Operation(
+            tags = "Отчеты усыновителей",
+            summary = "Получение всех отчетов усыновителя",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Список всех отчетов усыновителя"
+                    )
+            }
+    )
     @GetMapping("/getAll/{userId}")
-    public ResponseEntity<List<Report>> getAllUserReports(@PathVariable Long userId) {
+    public ResponseEntity<List<Report>> getAllUserReports(@Parameter(description = "ID усыновителя")
+                                                          @PathVariable Long userId) {
         List<Report> reportsList = reportService.getReportsByUserId(userId);
         if (reportsList.isEmpty()) {
             return ResponseEntity.notFound().build();
