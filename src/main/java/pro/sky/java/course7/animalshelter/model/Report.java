@@ -52,10 +52,8 @@ public class Report {
     @Enumerated(EnumType.STRING)
     private Report.ReportStatus status = Report.ReportStatus.SENT;
 
-
     public Report() {
     }
-
 
     public Report(Long id, Long clientId, String reportText, String filePath, Integer fileSize, byte[] preview, LocalDate sentDate, ReportStatus status) {
         this.id = id;

@@ -281,7 +281,6 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
         List<PhotoSize> photos = List.of(inputMessage.photo());
         PhotoSize photo = photos.stream()
                 .max(Comparator.comparing(PhotoSize::fileSize)).orElse(null);
-        assert photo != null;
         GetFile request = new GetFile(photo.fileId());
         GetFileResponse getFileResponse = animalShelterBot.execute(request);
         return getFileResponse.file();

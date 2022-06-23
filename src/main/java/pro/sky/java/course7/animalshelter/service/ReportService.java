@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Message;
 import pro.sky.java.course7.animalshelter.model.Report;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -24,9 +25,13 @@ public interface ReportService {
 
     Report handlePhoto(Message message, Integer fileSize, String filePath, String reportText) throws IOException;
 
-    File downloadFile(String filePath, Message message) throws IOException;
+    String getDirectoryPath(String filePath, Message message) throws IOException;
+
+    File downloadFile(String filePath, Message message);
 
     byte[] generatePhotoPreview(String filePath) throws IOException;
 
     Integer countUserReports(Long id);
+
+    Report editReportByVolunteer(Report report, Report.ReportStatus status);
 }
