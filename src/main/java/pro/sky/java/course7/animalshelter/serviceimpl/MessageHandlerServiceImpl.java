@@ -107,7 +107,6 @@ public class MessageHandlerServiceImpl implements MessageHandlerService {
                 //dog commands
 
                 case DOG_SHELTER_CMD:
-                    Animal.AnimalTypes type = DOG;
                 case BACK_TO_DOG_START_MENU_CMD:
                     sendMessage(chatId, "Добро пожаловать в приют для собак!\n" + CHOOSE_OPTION, dogStartMenuButtons());
                     break;
