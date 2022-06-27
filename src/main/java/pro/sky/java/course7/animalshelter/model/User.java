@@ -1,46 +1,55 @@
 package pro.sky.java.course7.animalshelter.model;
 
+
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "Client")
+@Table(name = "client")
 public class User {
+
 
     public enum UserStatus {
 
-        USER,
+        GUEST,
+        ADOPTER_ON_TRIAL,
+        ADOPTER_TRIAL_FAILED,
+        OWNER
 
-        REQUESTED,
-
-        TRIAL,
-
-        TRIAL_14_MORE,
-
-        TRIAL_30_MORE,
-
-        CAT_ADOPTER,
-
-        DOG_ADOPTER,
-
-        VOLUNTEER,
     }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(name = "id")
+    private Long id;
+    @Column(name = "chat_id")
+    private Long chatId;
 
-    private long chatId;
-
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "email")
     private String email;
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "animal_type", referencedColumnName = "type")
+    private Animal animal;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Report> reportList;
+
+    @Column(name = "start_trial_date")
+    private LocalDate startTrialDate;
+
+    @Column(name = "end_trial_date")
+    private LocalDate endTrialDate;
 
     public User() {
     }
@@ -51,6 +60,20 @@ public class User {
         this.email = email;
     }
 
+    public User(String name, String phoneNumber, String email, Animal animal) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.animal = animal;
+    }
+
+    public Animal getAnimal() {
+        return animal;
+    }
+
+    public void setAnimal(Animal animal) {
+        this.animal = animal;
+    }
 
     public UserStatus getStatus() {
         return status;
@@ -60,19 +83,19 @@ public class User {
         this.status = status;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public long getChatId() {
+    public Long getChatId() {
         return chatId;
     }
 
-    public void setChatId(long chatId) {
+    public void setChatId(Long chatId) {
         this.chatId = chatId;
     }
 
@@ -100,19 +123,34 @@ public class User {
         this.email = email;
     }
 
+    public LocalDate getStartTrialDate() {
+        return startTrialDate;
+    }
+
+    public void setStartTrialDate(LocalDate startTrialDate) {
+        this.startTrialDate = startTrialDate;
+    }
+
+    public LocalDate getEndTrialDate() {
+        return endTrialDate;
+    }
+
+    public void setEndTrialDate(LocalDate endTrialDate) {
+        this.endTrialDate = endTrialDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return getId() == user.getId() && getChatId() == user.getChatId()  && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus();
+        return getId().equals(user.getId()) && getChatId().equals(user.getChatId()) && getName().equals(user.getName()) && getPhoneNumber().equals(user.getPhoneNumber()) && getEmail().equals(user.getEmail()) && getStatus() == user.getStatus() && getAnimal().equals(user.getAnimal()) && reportList.equals(user.reportList) && getStartTrialDate().equals(user.getStartTrialDate()) && getEndTrialDate().equals(user.getEndTrialDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus());
+        return Objects.hash(getId(), getChatId(), getName(), getPhoneNumber(), getEmail(), getStatus(), getAnimal(), reportList, getStartTrialDate(), getEndTrialDate());
     }
-
 
     @Override
     public String toString() {
@@ -123,6 +161,9 @@ public class User {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", status=" + status +
+                ", animal=" + animal +
+                ", startTrialDate=" + startTrialDate +
+                ", endTrialDate=" + endTrialDate +
                 '}';
     }
 }

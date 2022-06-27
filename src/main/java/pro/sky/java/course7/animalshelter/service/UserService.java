@@ -1,27 +1,45 @@
 package pro.sky.java.course7.animalshelter.service;
+
+import com.pengrad.telegrambot.model.Message;
+import pro.sky.java.course7.animalshelter.model.Animal;
+import pro.sky.java.course7.animalshelter.model.Report;
 import pro.sky.java.course7.animalshelter.model.User;
 
+import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
-    User createUser(User user);
+    User save(User user);
 
-    User save(User user, long chatId);
+    User edit(Long id, Long chatId, User user, User.UserStatus status, Animal.AnimalTypes type);
 
-    User edit(User user, long chatId, User.UserStatus status);
+    User createUserByVolunteer(User user, Animal.AnimalTypes type);
 
-    Optional<User> parse(String userDataMessage);
+    Optional<User> parse(String userDataMessage, Long chatId);
 
-    User getUserById(long id);
+    String registrationUser(Message inputMessage);
 
-    User getUserByChatId(long chatId);
+    User getUserById(Long id);
 
-    void deleteUserById(long id);
+    User getUserByChatId(Long chatId);
 
-    void deleteUserByChatId(long chatId);
+    void deleteUserById(Long id);
 
     Collection<User> getAllUsers();
+
+    List<User> getAllAdopters(User.UserStatus status);
+
+    boolean adopterOnTrialExists(Long id);
+
+    List<User> getAdoptersWithEndOfTrial(User.UserStatus status, LocalDate endTrialDate);
+
+    List<User> getAdoptersByReportStatusAndSentDate(Report.ReportStatus reportStatus, LocalDate sentDate);
+
+    List<User>getAdoptersByStatusAndReportDate(User.UserStatus status, LocalDate sentDate);
+
+    List<User> getAdoptersByStatusAndExtendedTrial(User.UserStatus status);
 
 }
