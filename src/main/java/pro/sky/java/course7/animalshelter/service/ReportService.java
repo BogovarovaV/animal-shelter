@@ -4,30 +4,34 @@ import com.pengrad.telegrambot.model.Message;
 import pro.sky.java.course7.animalshelter.model.Report;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
 public interface ReportService {
 
-    List<Report> findByUserId(long userId);
+    List<Report> getReportsByUserId(Long userId);
 
-    Report findById(long id);
+    Report getById(Long id);
 
-    Report findLastReportByUserId(long userId);
+    Report getLastReportByUserId(Long userId);
 
-    LocalDate getDateOfLastReportByUserId(long userId);
+    LocalDate getDateOfLastReportByUserId(Long userId);
 
     Report saveReport(Report report);
 
-    boolean reportWasSentToday(LocalDate messageDate, long userId);
+    boolean reportWasSentToday(LocalDate messageDate, Long userId);
 
     Report handlePhoto(Message message, Integer fileSize, String filePath, String reportText) throws IOException;
 
-    File downloadFile(String filePath, Message message) throws IOException;
+    String getDirectoryPath(String filePath, Message message) throws IOException;
+
+    File downloadFile(String filePath, Message message);
 
     byte[] generatePhotoPreview(String filePath) throws IOException;
 
-    Integer countUserReports(long id);
+    Integer countUserReports(Long id);
 
+    Report editReportByVolunteer(Report report, Report.ReportStatus status);
 }

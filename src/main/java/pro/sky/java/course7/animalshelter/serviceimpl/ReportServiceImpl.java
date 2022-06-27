@@ -45,7 +45,7 @@ public class ReportServiceImpl implements ReportService {
         Report report = new Report();
         report.setClientId(userService.getUserByChatId(message.chat().id()).getId());
         report.setReportText(reportText);
-        report.setFilePath(filePath);
+        report.setFilePath(getDirectoryPath(filePath, message));
         report.setFileSize(fileSize);
         report.setSentDate(LocalDate.now());
         try {
@@ -58,25 +58,35 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public File downloadFile(String filePath, Message message) {
-        java.io.File file = null;
+    public String getDirectoryPath(String filePath, Message message) {
+        String pathToFile = null;
         try {
             Properties sysProps = System.getProperties();
-            URL url = new URL(filePath);
-            InputStream in = url.openStream();
             String directoryPath = sysProps.getProperty("file.separator")
                     + sysProps.getProperty("user.home") + sysProps.getProperty("file.separator") +
-                    "Documents" + sysProps.getProperty("file.separator") + "dev";
+                    "Documents" + sysProps.getProperty("file.separator") + "devv";
             java.io.File directory = new java.io.File(directoryPath);
-
-            String pathToFile = directoryPath + sysProps.getProperty("file.separator")
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            pathToFile = directoryPath + sysProps.getProperty("file.separator")
                     + userService.getUserByChatId(message.chat().id()).getId() + "."
                     + LocalDate.now() + "."
                     + filePath.substring(filePath.lastIndexOf("/") + 1);
 
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return pathToFile;
+    }
+
+    @Override
+    public File downloadFile(String filePath, Message message) {
+        java.io.File file = null;
+        try {
+            URL url = new URL(filePath);
+            InputStream in = url.openStream();
+            String pathToFile = getDirectoryPath(filePath, message);
             file = new java.io.File(pathToFile);
             file.createNewFile();
 
@@ -88,7 +98,7 @@ public class ReportServiceImpl implements ReportService {
             }
             os.flush();
             os.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return file;
@@ -115,38 +125,43 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<Report> findByUserId(long userId) {
+    public List<Report> getReportsByUserId(Long userId) {
         return repository.findByUserId(userId).orElse(null);
     }
 
     @Override
-    public Report findById(long id) {
+    public Report getById(Long id) {
         return repository.findById(id).orElse(null);
     }
 
     @Override
-    public Report findLastReportByUserId(long userId) {
+    public Report getLastReportByUserId(Long userId) {
         return repository.findLastReportByUserId(userId).orElse(null);
     }
 
     @Override
-    public LocalDate getDateOfLastReportByUserId(long userId) {
-        return repository.getDateOfLastReportByUserId(userId).orElse(null);
+    public LocalDate getDateOfLastReportByUserId(Long userId) {
+        return repository.findDateOfLastReportByUserId(userId).orElse(null);
     }
 
     @Override
-    public boolean reportWasSentToday(LocalDate messageDate, long userId) {
+    public boolean reportWasSentToday(LocalDate messageDate, Long userId) {
         return (getDateOfLastReportByUserId(userId) != null &&
                 getDateOfLastReportByUserId(userId).equals(messageDate));
     }
 
     @Override
-    public Integer countUserReports(long id) {
+    public Integer countUserReports(Long id) {
         return repository.countReportsByClientId(id).orElse(null);
+    }
+
+    @Override
+    public Report editReportByVolunteer(Report report, Report.ReportStatus status) {
+        report.setStatus(status);
+        return repository.save(report);
     }
 
     private String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
-
 }

@@ -11,18 +11,18 @@ import java.util.Optional;
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
     @Query("select r from Report r where r.user.id = ?1")
-    Optional<List<Report>> findByUserId(long userId);
+    Optional<List<Report>> findByUserId(Long userId);
 
     @Query(value = "select max (r) from Report r where r.user.id=?1")
-    Optional<Report> findLastReportByUserId(long userId);
+    Optional<Report> findLastReportByUserId(Long userId);
 
     @Query("select max (r.sentDate) from Report r where r.user.id = ?1")
-    Optional<LocalDate> getDateOfLastReportByUserId(long userId);
+    Optional<LocalDate> findDateOfLastReportByUserId(Long userId);
 
     @Query("select r from Report r where r.id = ?1")
-    Optional<Report> findById(long id);
+    Optional<Report> findById(Long id);
 
     @Query("select count(r) from Report r where r.clientId = ?1")
-    Optional<Integer> countReportsByClientId(long id);
+    Optional<Integer> countReportsByClientId(Long id);
 
 }

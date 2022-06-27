@@ -334,6 +334,6 @@ public interface Constants {
             "https://planetakoshek.kz/\n" +
             "https://wacc-cats.org/";
 
-
+    String COSTYL = "https://api.telegram.org/file/bot5329223817:AAFpm_DZ4n2Egf6DTQj4OJ3D3SKBRnC5LTU/photos/file_67.jpg";
 
 }
